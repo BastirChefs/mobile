@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "bastirchef" "\0"
+            VALUE "FileDescription", "bastir_chef" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "bastirchef" "\0"
+            VALUE "InternalName", "bastir_chef" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "bastirchef.exe" "\0"
-            VALUE "ProductName", "bastirchef" "\0"
+            VALUE "OriginalFilename", "bastir_chef.exe" "\0"
+            VALUE "ProductName", "bastir_chef" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
