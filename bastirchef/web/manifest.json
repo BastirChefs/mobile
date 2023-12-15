@@ -1,6 +1,6 @@
 {
-    "name": "bastir_chef",
-    "short_name": "bastir_chef",
+    "name": "bastirchef",
+    "short_name": "bastirchef",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
