@@ -80,10 +80,11 @@ class _DropDownTextFieldState extends State<DropDownTextField> {
               ),
         ),
         submitButtonChild: const Text(
-          'Done',
+          'Search',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
+            color: Color(0xFFD75912)
           ),
         ),
         options: widget.options,
@@ -141,7 +142,9 @@ class _DropDownTextFieldState extends State<DropDownTextField> {
                 suffixIcon: const Padding(
                   padding:
                   EdgeInsets.only(top: 8), // add padding to adjust icon
-                  child: Icon(Icons.keyboard_capslock),
+                  child: Icon(Icons.search,
+                              color: Color(0xFFD75912),
+                              size: 40),
                 ),
               ),
 

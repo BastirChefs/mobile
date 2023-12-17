@@ -137,7 +137,7 @@ class _MainBodyState extends State<MainBody> {
                   Expanded(
                       child: widget.dropDown.bottomSheetTitle ?? Container()),
 
-                  /// Done button
+                  /// Search button
                   Visibility(
                     visible: widget.dropDown.enableMultipleSelection,
                     child: Align(
@@ -149,7 +149,7 @@ class _MainBodyState extends State<MainBody> {
                             _onUnFocusKeyboardAndPop();
                           },
                           child: widget.dropDown.submitButtonChild ??
-                              const Text('Done'),
+                              const Text('Search'),
                         ),
                       ),
                     ),
@@ -208,9 +208,11 @@ class _MainBodyState extends State<MainBody> {
                               });
                             },
                             child: isSelected
-                                ? const Icon(Icons.check_box)
+                                ? const Icon(Icons.check_box,
+                                            color: Color(0xFFD75912))
                                 : const Icon(
-                                Icons.check_box_outline_blank),
+                                Icons.check_box_outline_blank,
+                                color: Color(0xFFD75912)),
                           )
                               : const SizedBox(
                             height: 0.0,

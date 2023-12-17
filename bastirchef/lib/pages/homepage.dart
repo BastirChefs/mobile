@@ -64,11 +64,11 @@ class Homepage extends StatelessWidget {
                           ),
                           child: DropDownTextField(
                           textEditingController: TextEditingController(),
-                          hint: 'Select Category',
-                          options: {1:"tomato",2:"patato",3:"chicken",4:"pasta"},
+                          hint: 'Select Ingredients',
+                          options: {1:"Tomato",2:"Patato",3:"Chicken",4:"Pasta",5:"Pesto Sauce",6:"Arrabiata Sauce",7:"Filler",8:"Filler",9:"Filler",10:"Filler",11:"Filler"},
                           selectedOptions: [2,3],
                           onChanged: (selectedIds) {
-                            // setState(() => selectedIds);
+                            //setState(() => selectedIds);
                           },
                           multiple: true,
                         ),
