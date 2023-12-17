@@ -1,8 +1,12 @@
 import 'package:bastirchef/firebase_options.dart';
+import 'package:bastirchef/pages/favourites.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'pages/homepage.dart';
 import 'pages/src/bottom_nav_bar.dart';
+import 'pages/favourites.dart';
+import 'pages/shopping_list.dart';
+import 'pages/profile_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,8 +23,10 @@ class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    Homepage(), // Your Homepage Widget
-    // Add other screens as needed
+    Homepage(),
+    Favourites(),
+    ShoppingList(),
+    Profile(),
   ];
 
   @override
@@ -28,8 +34,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
         home: Scaffold(
-        body: Homepage(),
-        //body: _screens[_selectedIndex],
+        //body: Homepage(),
+        body: _screens[_currentIndex],
         bottomNavigationBar: SalomonBottomBar(
           currentIndex: _currentIndex,
           onTap: (i) => setState(() => _currentIndex = i),
