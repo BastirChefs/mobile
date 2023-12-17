@@ -45,14 +45,14 @@ class _MyAppState extends State<MyApp> {
 
             /// Likes
             SalomonBottomBarItem(
-              icon: Icon(Icons.favorite_border),
-              title: Text("Likes"),
+              icon: Icon(Icons.star),
+              title: Text("Favourites"),
             ),
 
             /// Search
             SalomonBottomBarItem(
-              icon: Icon(Icons.search),
-              title: Text("Search"),
+              icon: Icon(Icons.shopping_cart),
+              title: Text("Shopping List"),
             ),
 
             /// Profile
