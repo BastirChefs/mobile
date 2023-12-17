@@ -66,6 +66,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '353788783151',
     projectId: 'bastirchef-3aeef',
     storageBucket: 'bastirchef-3aeef.appspot.com',
+    iosClientId: '353788783151-cfk9i9neo5t4tpp7ctjbg31sadtg13if.apps.googleusercontent.com',
     iosBundleId: 'com.example.bastirchef',
   );
 
@@ -75,6 +76,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '353788783151',
     projectId: 'bastirchef-3aeef',
     storageBucket: 'bastirchef-3aeef.appspot.com',
+    iosClientId: '353788783151-i1lohqvd5319hvp1kb5a51d5q5cm6p52.apps.googleusercontent.com',
     iosBundleId: 'com.example.bastirchef.RunnerTests',
   );
 }

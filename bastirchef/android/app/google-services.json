@@ -12,7 +12,12 @@
           "package_name": "com.example.bastirchef"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "353788783151-k9eh5o4vqbalall2cjmm383n5fimvdb5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBD0TkMvTQ5FKKbkaSIi8Kt6NBcPamPuYc"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353788783151-k9eh5o4vqbalall2cjmm383n5fimvdb5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "353788783151-cfk9i9neo5t4tpp7ctjbg31sadtg13if.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bastirchef"
+              }
+            }
+          ]
         }
       }
     }
