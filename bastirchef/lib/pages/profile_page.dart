@@ -13,17 +13,28 @@ class Profile extends StatelessWidget {
       home: Scaffold(
           appBar: AppBar(
             backgroundColor: Color(0xFF282828),
-            title: Text("Profile Page",
-                style: TextStyle(color: Color(0xFFE3E3E3))),
+            leading: Icon(
+              Icons.arrow_back_ios_new_outlined,
+              color: Color(0xFFE3E3E3),
+              size: 40,
+            ),
+            title: Text(
+              "Profile Page",
+              style: TextStyle(
+                color: Color(0xFFE3E3E3),
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+            ),
           ),
-          backgroundColor: Color(0xFFE3E3E3),
           body: SingleChildScrollView(
-              child: Column(
+              child: Center(child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children : [
-                    Text("Hello"),
-                    Text("Profile Page"),
+                    Text("hello"),
+                    Text("profile page will be added here")
 
-                  ])
+                  ]))
           )
       ),
     );

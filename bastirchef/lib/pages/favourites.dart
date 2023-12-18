@@ -15,11 +15,23 @@ class Favourites extends StatelessWidget {
           backgroundColor: Color(0xFFE3E3E3),
           appBar: AppBar(
             backgroundColor: Color(0xFF282828),
-            title: Text("Favourites",
-                style: TextStyle(color: Color(0xFFE3E3E3))),
-          ),
+            leading: Icon(
+              Icons.arrow_back_ios_new_outlined,
+              color: Color(0xFFE3E3E3),
+              size: 40,
+            ),
+              title: Text(
+                "Favourites",
+                style: TextStyle(
+                  color: Color(0xFFE3E3E3),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+              ),
+            ),
           body: SingleChildScrollView(
-              child: Column(
+              child: Center(child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children : [
                     FoodBox(),
                     FoodBox(),
@@ -27,7 +39,7 @@ class Favourites extends StatelessWidget {
                     FoodBox(),
                     FoodBox(),
 
-                  ])
+                  ]))
           )
       ),
     );
