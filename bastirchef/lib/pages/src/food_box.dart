@@ -21,27 +21,57 @@ class FoodBox extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Hello, User Name",
-            style: TextStyle(
-              color: Color(0xFFE3E3E3),
-              fontSize: 30,
-              fontWeight: FontWeight.w400,
+          Container(
+            width: 120, // Adjust the width of the image container
+            height: 110,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.white,
+            ),
+            // Replace this with your image widget
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15), // Same radius as the container decoration
+              child: Image.asset(
+                "lib/pages/src/images/pizza.jpg",
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          SizedBox(height: 10), // Add spacing between the texts
-          Text(
-            "What would you",
-            style: TextStyle(
-              color: Color(0xFFE3E3E3),
-              fontSize: 20,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
+          SizedBox(width: 20), // Add spacing between the texts
+          Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Food Name",
+                style: TextStyle(
+                  color: Color(0xFFE3E3E3),
+                  fontSize: 20,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(children:[
+                Icon(Icons.favorite_border_outlined,
+                color:Color(0xFFE3E3E3) ),
+                SizedBox(width: 5),
+                Text("2,3k",
+                style: TextStyle(color: Color(0xFFE3E3E3))),
+                SizedBox(width: 17),
+                Icon(Icons.mode_comment_outlined,
+                    color:Color(0xFFE3E3E3) ),
+
+                SizedBox(width: 5),
+                Text("2,3k",
+                    style: TextStyle(color: Color(0xFFE3E3E3)))
+              ])
+            ]
+          )
+
         ],
       ),
     );
