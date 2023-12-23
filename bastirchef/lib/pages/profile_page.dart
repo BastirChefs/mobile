@@ -1,31 +1,46 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_key_in_widget_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
+
 import 'package:flutter/material.dart';
 import 'src/button.dart';
+import 'storage_page.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  List<String> userRecipeLists = [
+    'Breakfast Recipes',
+    'Dinner Ideas',
+    'Healthy Snacks',
+    'Breakfast Recipes',
+    'Dinner Ideas',
+  ];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-          backgroundColor: Color(0xFFE3E3E3),
-          appBar: AppBar(
-            backgroundColor: Color(0xFF282828),
-            leading: Icon(
-              Icons.arrow_back_ios_new_outlined,
+        backgroundColor: Color(0xFFE3E3E3),
+        appBar: AppBar(
+          backgroundColor: Color(0xFF282828),
+          leading: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            color: Color(0xFFE3E3E3),
+            size: 40,
+          ),
+          title: Text(
+            "Profile Page",
+            style: TextStyle(
               color: Color(0xFFE3E3E3),
-              size: 40,
-            ),
-            title: Text(
-              "Profile Page",
-              style: TextStyle(
-                color: Color(0xFFE3E3E3),
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
             ),
           ),
-          body: ListView(
+        ),
+        body: SingleChildScrollView(
+          child: Column(
             children: [
               //1st box: profile photo, username label, username
               Container(
@@ -45,10 +60,10 @@ class Profile extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                            height:
-                                8.0), // Add spacing between label and username
+                          height: 8.0,
+                        ),
                         Text(
-                          'gordon.ramsay', // Replace with the actual username
+                          'gordon.ramsay',
                           style: TextStyle(
                             fontSize: 20.0,
                             color: Colors.black,
@@ -59,27 +74,23 @@ class Profile extends StatelessWidget {
                     Column(
                       children: [
                         CircleAvatar(
-                          radius: 40.0, // Adjust the radius as needed
+                          radius: 40.0,
                           backgroundImage: AssetImage(
-                              "lib/pages/src/images/baklava.jpg"), // Replace with your profile image
+                              "lib/pages/src/images/baklava.jpg"),
                         ),
                         SizedBox(
-                            height:
-                                8.0), // Add spacing between profile photo and text
+                          height: 8.0,
+                        ),
                         GestureDetector(
-                          onTap: () {
-                            // Add your logic for changing the profile photo here
-                          },
+                          onTap: () {},
                           child: Row(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.end, //to align icon and text
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
                                 'Change Photo',
                                 style: TextStyle(
                                   fontSize: 16.0,
-                                  color: Colors
-                                      .black, // You can change the color to match your design
+                                  color: Colors.black,
                                 ),
                               ),
                               Icon(Icons.edit),
@@ -93,89 +104,104 @@ class Profile extends StatelessWidget {
               ),
               //2nd box: create recipe, recipe created by me,my storage
               Container(
-                padding: EdgeInsets.only(
-                    top: 16,
-                    bottom: 16,
-                    left: 20,
-                    right: 200), // Add padding as needed
+                padding: EdgeInsets.only(top: 16, bottom: 16, left: 20, right: 200),
                 child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // Center buttons vertically
-                  crossAxisAlignment: CrossAxisAlignment
-                      .stretch, // Stretch buttons horizontally
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     CustomButton(
                       text: 'Create Recipe',
                       onPressed: () {
-                        // Add your logic for the "Create Recipe" button here
                         print('Create Recipe button pressed!');
                       },
                     ),
-                    SizedBox(height: 10.0), // Add spacing between buttons
+                    SizedBox(height: 10.0),
                     CustomButton(
                       text: 'Storage',
                       onPressed: () {
-                        // Add your logic for the "Storage" button here
                         print('Storage button pressed!');
                       },
                     ),
-                    SizedBox(height: 16.0), // Add spacing between buttons
+                    SizedBox(height: 16.0),
                     CustomButton(
                       text: 'Recipes by Me',
                       onPressed: () {
-                        // Add your logic for the "Recipes by Me" button here
                         print('Recipes by Me button pressed!');
                       },
                     ),
                   ],
                 ),
               ),
-              //3rd box: recipe lists
-              // Expanded(
-              //   child: Container(
-              //     //height: 350,
-              //     color: const Color.fromARGB(255, 161, 154, 172),
-              //     padding: EdgeInsets.only(top: 20, left: 20,bottom: 20),
-              //     child: Text("My Recipe Lists",
-              //             style: TextStyle(
-              //               fontSize: 20.0,
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //   ),
-              // ),
-              Container(
-                padding: EdgeInsets.all(16.0), // Add padding as needed
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'My Recipe Lists',
-                          style: TextStyle(
-                            fontSize: 20.0, // Adjust the font size as needed
-                            fontWeight: FontWeight.bold, // Make the header bold
+
+              //3rd box: My Recipe Lists with Add button
+              SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'My Recipe Lists',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                userRecipeLists.add('New Recipe List');
+                              });
+                            },
+                            child: Icon(
+                              Icons.add,
+                              size: 24.0,
+                              color: Color(0xFFD75912),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.0),
+                      Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.grey, // Set the border color
+                            width: 2.0, // Set the border width
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            print("add list tapped");
-                            // Add your logic for the "Add" button here
-                            // This is where you can handle the add button click event
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: userRecipeLists.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Text(
+                                userRecipeLists[index],
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                              trailing: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    userRecipeLists.removeAt(index);
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            );
                           },
-                          child: Icon(
-                            Icons.add, // Replace with your preferred add icon
-                            size: 24.0, // Adjust the icon size as needed
-                            color: Color(
-                                0xFFD75912), // Adjust the icon color as needed
-                          ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 16.0),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -185,26 +211,25 @@ class Profile extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Icons
-                          .exit_to_app, // Replace with your preferred signout icon
-                      color:
-                          Colors.red, // Replace with your preferred icon color
-                      size: 24.0, // Replace with your preferred icon size
+                      Icons.exit_to_app,
+                      color: Colors.red,
+                      size: 24.0,
                     ),
-                    SizedBox(width: 16.0), // Add spacing between icon and text
+                    SizedBox(width: 16.0),
                     Text(
                       'Sign Out',
                       style: TextStyle(
-                        fontSize: 18.0, // Replace with your preferred text size
-                        color: Colors
-                            .black, // Replace with your preferred text color
+                        fontSize: 18.0,
+                        color: Colors.black,
                       ),
                     ),
                   ],
                 ),
               )
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }
