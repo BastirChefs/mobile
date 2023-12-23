@@ -1,14 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
-import 'package:bastirchef/pages/src/food_box.dart';
+import 'src/button.dart';
 
-class Storage extends StatefulWidget {
+class RecipesByMe extends StatefulWidget {
   @override
-  State<Storage> createState() => _StorageState();
+  State<RecipesByMe> createState() => _RecipesByMeState();
 }
 
-class _StorageState extends State<Storage> {
+class _RecipesByMeState extends State<RecipesByMe> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,7 +22,7 @@ class _StorageState extends State<Storage> {
               size: 40,
             ),
             title: Text(
-              "Storage",
+              "Recipes By Me",
               style: TextStyle(
                 color: Color(0xFFE3E3E3),
                 fontWeight: FontWeight.bold,
@@ -35,7 +35,7 @@ class _StorageState extends State<Storage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
                     Text("hello"),
-                    Text("storage will be here")
+                    Text("recipes by me will be here")
 
                   ]))
           )

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
 
+import 'package:bastirchef/pages/create_recipe.dart';
+import 'package:bastirchef/pages/recipes_by_me.dart';
 import 'package:flutter/material.dart';
 import 'src/button.dart';
 import 'storage_page.dart';
@@ -75,8 +77,8 @@ class _ProfileState extends State<Profile> {
                       children: [
                         CircleAvatar(
                           radius: 40.0,
-                          backgroundImage: AssetImage(
-                              "lib/pages/src/images/baklava.jpg"),
+                          backgroundImage:
+                              AssetImage("lib/pages/src/images/baklava.jpg"),
                         ),
                         SizedBox(
                           height: 8.0,
@@ -104,7 +106,8 @@ class _ProfileState extends State<Profile> {
               ),
               //2nd box: create recipe, recipe created by me,my storage
               Container(
-                padding: EdgeInsets.only(top: 16, bottom: 16, left: 20, right: 200),
+                padding:
+                    EdgeInsets.only(top: 16, bottom: 16, left: 20, right: 200),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -113,6 +116,12 @@ class _ProfileState extends State<Profile> {
                       text: 'Create Recipe',
                       onPressed: () {
                         print('Create Recipe button pressed!');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CreateRecipe(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: 10.0),
@@ -120,6 +129,12 @@ class _ProfileState extends State<Profile> {
                       text: 'Storage',
                       onPressed: () {
                         print('Storage button pressed!');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Storage(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: 16.0),
@@ -127,6 +142,12 @@ class _ProfileState extends State<Profile> {
                       text: 'Recipes by Me',
                       onPressed: () {
                         print('Recipes by Me button pressed!');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecipesByMe(),
+                          ),
+                        );
                       },
                     ),
                   ],
