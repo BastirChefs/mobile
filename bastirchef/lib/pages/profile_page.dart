@@ -229,24 +229,31 @@ class _ProfileState extends State<Profile> {
               //4th box: signout
               Container(
                 padding: EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.exit_to_app,
-                      color: Colors.red,
-                      size: 24.0,
-                    ),
-                    SizedBox(width: 16.0),
-                    Text(
-                      'Sign Out',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.black,
+                child: GestureDetector(
+                  onTap: () {
+                    // Call your sign out function here
+                    print('Sign out tapped'); // Replace with your sign out function
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.exit_to_app,
+                        color: Colors.red,
+                        size: 24.0,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 16.0),
+                      Text(
+                        'Sign Out',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               )
+
             ],
           ),
         ),
