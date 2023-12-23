@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
   final String email;
-  final String uid;
+  //final String uid;
   final String username;
   final DateTime createdAt;
   final List favoriteRecipes;
@@ -13,7 +13,7 @@ class User {
 
   const User({
     required this.username,
-    required this.uid,
+    //required this.uid,
     required this.email,
     required this.createdAt,
     required this.favoriteRecipes,
@@ -27,7 +27,7 @@ class User {
 
     return User(
       username: snapshot["username"],
-      uid: snapshot["uid"],
+      //uid: snapshot["uid"],
       email: snapshot["email"],
       createdAt: snapshot["created_at"],
       favoriteRecipes: snapshot["favorite_recipes"],
@@ -39,7 +39,7 @@ class User {
 
   Map<String, dynamic> toJson() => {
     "username": username,
-    "uid": uid,
+    //"uid": uid,
     "email": email,
     "created_at": createdAt,
     "favorite_recipes": favoriteRecipes,

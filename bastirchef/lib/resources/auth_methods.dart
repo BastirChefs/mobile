@@ -34,7 +34,7 @@ class AuthMethods {
 
         model.User user = model.User(
           username: username,
-          uid: cred.user!.uid,
+          //uid: cred.user!.uid,
           email: email,
           createdAt: DateTime.now(),
           favoriteRecipes: [],
