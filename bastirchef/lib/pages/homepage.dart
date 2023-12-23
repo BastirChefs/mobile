@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bastirchef/firebase_options.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +9,43 @@ import 'package:flutter/material.dart';
 import 'src/drop_down_text_field.dart';
 
 
-class Homepage extends StatelessWidget {
+class Homepage extends StatefulWidget {
+
+  @override
+  State<Homepage> createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  var userData = {};
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      userData = userSnap.data()!;
+      print(userData);
+      setState(() {});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +80,7 @@ class Homepage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Hello, User Name",
+                          "Hello, ${userData['username']}",
                           style: TextStyle(
                             color: Color(0xFFD75912),
                             fontSize: 30,
@@ -79,11 +117,11 @@ class Homepage extends StatelessWidget {
                     ),
                   ),
                     SizedBox(height: 10),
-                    FoodBox(),
-                    FoodBox(),
-                    FoodBox(),
-                    FoodBox(),
-                    FoodBox(),
+                    FoodBox(id: "x0KwRvsB0sHvGPZpieKe"),
+                    // FoodBox(),
+                    // FoodBox(),
+                    // FoodBox(),
+                    // FoodBox(),
 
                   ])
           )

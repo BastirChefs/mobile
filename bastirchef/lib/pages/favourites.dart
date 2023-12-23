@@ -34,11 +34,11 @@ class Favourites extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
                     SizedBox(height: 30),
-                    FoodBox(),
-                    FoodBox(),
-                    FoodBox(),
-                    FoodBox(),
-                    FoodBox(),
+                    // FoodBox(),
+                    // FoodBox(),
+                    // FoodBox(),
+                    // FoodBox(),
+                    // FoodBox(),
 
                   ]))
           )
