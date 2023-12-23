@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
+
 import 'package:bastirchef/firebase_options.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
 import 'package:firebase_core/firebase_core.dart';

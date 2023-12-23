@@ -1,5 +1,6 @@
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:bastirchef/firebase_options.dart';
-import 'package:bastirchef/pages/favourites.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'pages/homepage.dart';
