@@ -16,11 +16,18 @@ class _StorageState extends State<Storage> {
       home: Scaffold(
           appBar: AppBar(
             backgroundColor: Color(0xFF282828),
-            leading: Icon(
+            leading: GestureDetector(
+            onTap: () {
+              setState(() {
+                Navigator.pop(context);
+              });
+            },
+            child: Icon(
               Icons.arrow_back_ios_new_outlined,
               color: Color(0xFFE3E3E3),
               size: 40,
             ),
+          ),
             title: Text(
               "Storage",
               style: TextStyle(

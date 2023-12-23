@@ -14,10 +14,17 @@ class _CreateRecipeState extends State<CreateRecipe> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFF282828),
-          leading: Icon(
-            Icons.arrow_back_ios_new_outlined,
-            color: Color(0xFFE3E3E3),
-            size: 40,
+          leading: GestureDetector(
+            onTap: () {
+              setState(() {
+                Navigator.pop(context);
+              });
+            },
+            child: Icon(
+              Icons.arrow_back_ios_new_outlined,
+              color: Color(0xFFE3E3E3),
+              size: 40,
+            ),
           ),
           title: Text(
             "Create Recipe",
