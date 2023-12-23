@@ -1,3 +1,4 @@
+import 'package:bastirchef/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:bastirchef/resources/auth_methods.dart';
 import 'package:bastirchef/pages/homepage.dart';
@@ -34,7 +35,7 @@ class _LogInScreenState extends State<LogInScreen> {
       // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const HomeScreen()));
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => Homepage()
+            builder: (context) => Navigation()
           ),
         );
     } else {

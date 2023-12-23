@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
 
 import 'package:bastirchef/firebase_options.dart';
 import 'package:bastirchef/pages/login_screen.dart';
@@ -23,20 +23,10 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  int _currentIndex = 0;
-
-  final List<Widget> _screens = [
-    SignUpScreen(),
-    LogInScreen(),
-    Homepage(),
-    Favourites(),
-    ShoppingList(),
-    Profile(),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -44,49 +34,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
         home: Scaffold(
         //body: Homepage(),
-        body: _screens[_currentIndex],
-        bottomNavigationBar: SalomonBottomBar(
-          currentIndex: _currentIndex,
-          onTap: (i) => setState(() => _currentIndex = i),
-          backgroundColor: Color(0xFF282828),
-          selectedItemColor: Color(0xFFD75912),
-          unselectedItemColor: Color(0xFFE3E3E3),
-          items: [
-            /// SignUp
-            SalomonBottomBarItem(
-              icon: Icon(Icons.home),
-              title: Text("SignUp"),
-            ),
-            /// Login
-            SalomonBottomBarItem(
-              icon: Icon(Icons.home),
-              title: Text("LogIn"),
-            ),
-            /// Home
-            SalomonBottomBarItem(
-              icon: Icon(Icons.home),
-              title: Text("Home"),
-            ),
-
-            /// Likes
-            SalomonBottomBarItem(
-              icon: Icon(Icons.star),
-              title: Text("Favourites"),
-            ),
-
-            /// Search
-            SalomonBottomBarItem(
-              icon: Icon(Icons.shopping_cart),
-              title: Text("Shopping List"),
-            ),
-
-            /// Profile
-            SalomonBottomBarItem(
-              icon: Icon(Icons.person),
-              title: Text("Profile"),
-            ),
-          ],
-        ),
+        body: LogInScreen(),
         )
     );
   }

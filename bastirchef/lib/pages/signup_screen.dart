@@ -46,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => Homepage()
+          builder: (context) => LogInScreen()
           ),
       );
     } else {
