@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
 
+import 'package:bastirchef/pages/src/drop_down.dart';
 import 'package:flutter/material.dart';
 import 'src/button.dart'; // Ensure this import is correct for your CustomButton widget
 
@@ -9,7 +10,24 @@ class CreateRecipe extends StatefulWidget {
 }
 
 class _CreateRecipeState extends State<CreateRecipe> {
-  final List<String> ingredients = ["Example Ingredient 1", "Example Ingredient 2"];
+  void _addIngredient() {
+    DropDownState(
+      DropDown(
+        buttonText: "Add",
+        options: {1: "Tomato", 2: "Potato", 3: "Chicken", 4: "Pasta", 5: "Pesto Sauce"},
+        selectedOptions: [],
+        selectedItems: (List<dynamic> selectedList) {
+          // Logic to add selected ingredients to the ingredients list
+        },
+        enableMultipleSelection: true,
+      ),
+    ).showModal(context);
+  }
+
+  final List<String> ingredients = [
+    "Example Ingredient 1",
+    "Example Ingredient 2"
+  ];
 
   TextEditingController _titleTextController = TextEditingController();
   TextEditingController _descriptionTextController = TextEditingController();
@@ -64,7 +82,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
                     text: 'Add Ingredient',
                     onPressed: () {
                       setState(() {
-                        ingredients.add('New Ingredient');
+                        // ingredients.add('New Ingredient');
+                        _addIngredient();
                       });
                     },
                   ),
@@ -79,7 +98,9 @@ class _CreateRecipeState extends State<CreateRecipe> {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: ingredients.map((ingredient) => Text(ingredient)).toList(),
+                  children: ingredients
+                      .map((ingredient) => Text(ingredient))
+                      .toList(),
                 ),
               ),
               SizedBox(height: 20),

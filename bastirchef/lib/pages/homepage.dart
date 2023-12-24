@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -103,6 +103,7 @@ class _HomepageState extends State<Homepage> {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                           child: DropDownTextField(
+                          buttonText: "Search",
                           textEditingController: TextEditingController(),
                           hint: 'Select Ingredients',
                           options: {1:"Tomato",2:"Patato",3:"Chicken",4:"Pasta",5:"Pesto Sauce",6:"Arrabiata Sauce",7:"Filler",8:"Filler",9:"Filler",10:"Filler",11:"Filler"},
