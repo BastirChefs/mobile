@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
 
 class RecipeList extends StatefulWidget {
-  const RecipeList({super.key});
+  final List recipes;
+  const RecipeList({Key? key, required this.recipes}) : super(key:key);
 
   @override
   State<RecipeList> createState() => _RecipeListState();
@@ -54,7 +55,7 @@ class _RecipeListState extends State<RecipeList> {
                         ),
                       ),
                       SizedBox(height: 20), // Optional: to provide some spacing after the title
-                      FoodBox(id: "x0KwRvsB0sHvGPZpieKe"),
+                      FoodBox(id: widget.recipes[0]),
                       // FoodBox(),
                     ],
                   ),

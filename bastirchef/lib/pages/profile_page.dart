@@ -19,7 +19,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   var userData = {};
   bool isLoading = false;
-  List<String> userRecipeLists = [];
+  List<String> recipeListsNames = [];
 
   @override
   void initState() {
@@ -41,8 +41,8 @@ class _ProfileState extends State<Profile> {
       print(userData);
       
       if (userData.containsKey('recipe_list') && userData['recipe_list'] is Map<String, dynamic>) {
-        userRecipeLists = userData['recipe_list'].keys.toList();
-        print(userRecipeLists);
+        recipeListsNames = userData['recipe_list'].keys.toList();
+        print(recipeListsNames);
       }
       setState(() {});
     } catch (e) {
@@ -227,7 +227,7 @@ class _ProfileState extends State<Profile> {
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      userRecipeLists.add('New Recipe List');
+                                      recipeListsNames.add('New Recipe List');
                                     });
                                   },
                                   child: Icon(
@@ -250,11 +250,11 @@ class _ProfileState extends State<Profile> {
                               ),
                               child: ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: userRecipeLists.length,
+                                itemCount: recipeListsNames.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return ListTile(
                                     title: Text(
-                                      userRecipeLists[index],
+                                      recipeListsNames[index],
                                       style: TextStyle(
                                         fontSize: 18.0,
                                       ),
@@ -262,7 +262,7 @@ class _ProfileState extends State<Profile> {
                                     trailing: GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          userRecipeLists.removeAt(index);
+                                          recipeListsNames.removeAt(index);
                                         });
                                       },
                                       child: Icon(
@@ -271,11 +271,11 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     ),
                                     onTap: () {
-                                      print(userRecipeLists[index] + "clicked");
+                                      print(recipeListsNames[index] + "clicked");
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => RecipeList(),
+                                          builder: (context) => RecipeList(recipes: userData['recipe_list'][recipeListsNames[index]]),
                                         ),
                                       );
                                     },

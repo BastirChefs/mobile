@@ -17,6 +17,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   var userData = {};
+  List<Map<String, dynamic>> allIngredients = [];
   bool isLoading = false;
 
   @override
@@ -37,6 +38,14 @@ class _HomepageState extends State<Homepage> {
 
       userData = userSnap.data()!;
       print(userData);
+
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('ingredients').get();
+      allIngredients = querySnapshot.docs.map((DocumentSnapshot doc) =>
+        doc.data() as Map<String, dynamic>).toList();
+      allIngredients.forEach((doc) {
+        print(doc);
+      });
       setState(() {});
     } catch (e) {
       print(e);

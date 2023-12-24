@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
+import 'package:bastirchef/resources/auth_methods.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Storage extends StatefulWidget {
   @override
@@ -9,6 +12,43 @@ class Storage extends StatefulWidget {
 }
 
 class _StorageState extends State<Storage> {
+  var userData = {};
+  bool isLoading = false;
+  //storage map mi array mi olcak karar verip devam et
+  List<String> userRecipeLists = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      userData = userSnap.data()!;
+      print(userData);
+      
+      if (userData.containsKey('recipe_list') && userData['recipe_list'] is Map<String, dynamic>) {
+        userRecipeLists = userData['recipe_list'].keys.toList();
+        print(userRecipeLists);
+      }
+      setState(() {});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

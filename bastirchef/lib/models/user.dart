@@ -8,7 +8,7 @@ class User {
   final List favoriteRecipes;
   final Map recipeLists;
   final List recipes;
-  final List storage;
+  final Map storage;
   final List recipeHistory;
 
 

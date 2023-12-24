@@ -23,7 +23,7 @@ class AuthMethods {
     required List favoriteRecipes,
     required List recipeLists,
     required List recipes,
-    required List storage,
+    required Map storage,
     required List recipeHistory,
   }) async {
     String res = "Some error occured";
@@ -41,7 +41,7 @@ class AuthMethods {
           favoriteRecipes: [],
           recipeLists: {},
           recipes: [],
-          storage: [],
+          storage: {},
           recipeHistory: [],
         );
 
