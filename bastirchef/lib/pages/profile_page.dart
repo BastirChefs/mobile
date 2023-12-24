@@ -1,6 +1,7 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors, prefer_interpolation_to_compose_strings
 
 import 'package:bastirchef/pages/login_screen.dart';
+import 'package:bastirchef/pages/recipe_list.dart';
 import 'package:bastirchef/resources/auth_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -56,7 +57,10 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get(),
+      future: FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Return a loading indicator or placeholder while data is being fetched
@@ -126,8 +130,8 @@ class _ProfileState extends State<Profile> {
                             children: [
                               CircleAvatar(
                                 radius: 40.0,
-                                backgroundImage:
-                                    AssetImage("lib/pages/src/images/baklava.jpg"),
+                                backgroundImage: AssetImage(
+                                    "lib/pages/src/images/baklava.jpg"),
                               ),
                               SizedBox(
                                 height: 8.0,
@@ -155,8 +159,8 @@ class _ProfileState extends State<Profile> {
                     ),
                     //2nd box: create recipe, recipe created by me,my storage
                     Container(
-                      padding:
-                          EdgeInsets.only(top: 16, bottom: 16, left: 20, right: 200),
+                      padding: EdgeInsets.only(
+                          top: 16, bottom: 16, left: 20, right: 200),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -266,6 +270,15 @@ class _ProfileState extends State<Profile> {
                                         color: Colors.red,
                                       ),
                                     ),
+                                    onTap: () {
+                                      print(userRecipeLists[index] + "clicked");
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => RecipeList(),
+                                        ),
+                                      );
+                                    },
                                   );
                                 },
                               ),
@@ -284,14 +297,14 @@ class _ProfileState extends State<Profile> {
                           if (context.mounted) {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const LogInScreen(),
+                                builder: (context) => const LogInScreen(),
                               ),
                             );
                           }
 
                           // Call your sign out function here
-                          print('Sign out tapped'); // Replace with your sign out function
+                          print(
+                              'Sign out tapped'); // Replace with your sign out function
                         },
                         child: Row(
                           children: [
@@ -312,7 +325,6 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                     )
-
                   ],
                 ),
               ),
