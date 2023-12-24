@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 import 'app_text_field.dart';
@@ -13,6 +15,8 @@ The DropDownState class is responsible for showing the dropdown as a modal botto
 class DropDown {
   /// This will give the list of data.
   final Map<int, String> options;
+
+  final String buttonText;
 
   // This will give the the selected items from data.
   final List<int>? selectedOptions;
@@ -43,9 +47,12 @@ class DropDown {
   /// This will set the background color to the dropdown.
   final Color dropDownBackgroundColor;
 
+  final VoidCallback? onSearch;
+
   DropDown({
     Key? key,
     required this.options,
+    required this.buttonText,
     this.selectedOptions,
     this.selectedItems,
     this.listBuilder,
@@ -55,6 +62,7 @@ class DropDown {
     this.searchWidget,
     this.isSearchVisible = true,
     this.dropDownBackgroundColor = Colors.transparent,
+    this.onSearch,
   });
 }
 
@@ -74,7 +82,7 @@ class DropDownState {
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return MainBody(dropDown: dropDown);
+            return MainBody(dropDown: dropDown, onSearch: dropDown.onSearch);
           },
         );
       },
@@ -85,8 +93,10 @@ class DropDownState {
 /// This is main class to display the bottom sheet body.
 class MainBody extends StatefulWidget {
   final DropDown dropDown;
+  final VoidCallback? onSearch;
 
-  const MainBody({required this.dropDown, Key? key}) : super(key: key);
+  const MainBody({required this.dropDown, Key? key, this.onSearch})
+      : super(key: key);
 
   @override
   State<MainBody> createState() => _MainBodyState();
@@ -129,7 +139,7 @@ class _MainBodyState extends State<MainBody> {
                   right: 13.0,
                   top: 21.0,
                   bottom:
-                  (widget.dropDown.enableMultipleSelection) ? 0.0 : 13.0),
+                      (widget.dropDown.enableMultipleSelection) ? 0.0 : 13.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -147,9 +157,14 @@ class _MainBodyState extends State<MainBody> {
                           onPressed: () {
                             widget.dropDown.selectedItems?.call(selectedList);
                             _onUnFocusKeyboardAndPop();
+                            widget.onSearch?.call();
                           },
                           child: widget.dropDown.submitButtonChild ??
-                              const Text('Search'),
+                            Text(widget.dropDown.buttonText,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFD75912)),),
                         ),
                       ),
                     ),
@@ -183,10 +198,10 @@ class _MainBodyState extends State<MainBody> {
                     onTap: widget.dropDown.enableMultipleSelection
                         ? null
                         : () {
-                      widget.dropDown.selectedItems
-                          ?.call([mainListKeys[index]]);
-                      _onUnFocusKeyboardAndPop();
-                    },
+                            widget.dropDown.selectedItems
+                                ?.call([mainListKeys[index]]);
+                            _onUnFocusKeyboardAndPop();
+                          },
                     child: Container(
                       color: widget.dropDown.dropDownBackgroundColor,
                       child: Padding(
@@ -198,26 +213,26 @@ class _MainBodyState extends State<MainBody> {
                               ),
                           trailing: widget.dropDown.enableMultipleSelection
                               ? GestureDetector(
-                            onTap: () {
-                              !isSelected
-                                  ? selectedList.add(mainListKeys[index])
-                                  : selectedList
-                                  .remove(mainListKeys[index]);
-                              setState(() {
-                                //selectedList;
-                              });
-                            },
-                            child: isSelected
-                                ? const Icon(Icons.check_box,
-                                            color: Color(0xFFD75912))
-                                : const Icon(
-                                Icons.check_box_outline_blank,
-                                color: Color(0xFFD75912)),
-                          )
+                                  onTap: () {
+                                    !isSelected
+                                        ? selectedList.add(mainListKeys[index])
+                                        : selectedList
+                                            .remove(mainListKeys[index]);
+                                    setState(() {
+                                      //selectedList;
+                                    });
+                                  },
+                                  child: isSelected
+                                      ? const Icon(Icons.check_box,
+                                          color: Color(0xFFD75912))
+                                      : const Icon(
+                                          Icons.check_box_outline_blank,
+                                          color: Color(0xFFD75912)),
+                                )
                               : const SizedBox(
-                            height: 0.0,
-                            width: 0.0,
-                          ),
+                                  height: 0.0,
+                                  width: 0.0,
+                                ),
                         ),
                       ),
                     ),
@@ -236,7 +251,7 @@ class _MainBodyState extends State<MainBody> {
     // ####### Clone of options
     final results = Map<int, String>.from(widget.dropDown.options);
     results.removeWhere((id, value) =>
-    !value.toLowerCase().contains(userSearchTerm.toLowerCase()));
+        !value.toLowerCase().contains(userSearchTerm.toLowerCase()));
 
     if (userSearchTerm.isEmpty) {
       mainList = widget.dropDown.options;
