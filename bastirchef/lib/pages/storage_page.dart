@@ -15,7 +15,7 @@ class _StorageState extends State<Storage> {
   var userData = {};
   bool isLoading = false;
   //storage map mi array mi olcak karar verip devam et
-  List<String> userRecipeLists = [];
+  Map<String, int> userStorage = {};
 
   @override
   void initState() {
@@ -36,10 +36,11 @@ class _StorageState extends State<Storage> {
       userData = userSnap.data()!;
       print(userData);
       
-      if (userData.containsKey('recipe_list') && userData['recipe_list'] is Map<String, dynamic>) {
-        userRecipeLists = userData['recipe_list'].keys.toList();
-        print(userRecipeLists);
-      }
+      List<String> storedName = userData['storage'].keys.toList();
+      List<dynamic> storedAmount = userData['storage'].values.toList(); 
+      print(storedName);
+      print(storedAmount);
+      
       setState(() {});
     } catch (e) {
       print(e);
