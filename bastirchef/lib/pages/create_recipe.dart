@@ -11,6 +11,8 @@ class CreateRecipe extends StatefulWidget {
 class _CreateRecipeState extends State<CreateRecipe> {
   final List<String> ingredients = ["Example Ingredient 1", "Example Ingredient 2"];
 
+  TextEditingController _titleTextController = TextEditingController();
+  TextEditingController _descriptionTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +46,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextField(
+                controller: _titleTextController,
                 decoration: InputDecoration(
                   labelText: "Title",
                   border: OutlineInputBorder(),
@@ -81,6 +84,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
               ),
               SizedBox(height: 20),
               TextField(
+                controller: _descriptionTextController,
                 decoration: InputDecoration(
                   labelText: "Description",
                   border: OutlineInputBorder(),
