@@ -19,6 +19,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   var userData = {};
   bool isLoading = false;
+  List<String> userRecipeLists = [];
 
   @override
   void initState() {
@@ -38,6 +39,11 @@ class _ProfileState extends State<Profile> {
 
       userData = userSnap.data()!;
       print(userData);
+      
+      if (userData.containsKey('recipe_list') && userData['recipe_list'] is Map<String, dynamic>) {
+        userRecipeLists = userData['recipe_list'].keys.toList();
+        print(userRecipeLists);
+      }
       setState(() {});
     } catch (e) {
       print(e);
@@ -47,13 +53,7 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  List<String> userRecipeLists = [
-    'Breakfast Recipes',
-    'Dinner Ideas',
-    'Healthy Snacks',
-    'Breakfast Recipes',
-    'Dinner Ideas',
-  ];
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
