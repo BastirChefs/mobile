@@ -54,6 +54,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -63,11 +64,14 @@ class _LogInScreenState extends State<LogInScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(child: Container(), flex: 1), // Reduced flex to move the signup button higher
-              const SizedBox(height: 64),
-              Image.asset(
-                "lib/pages/src/images/bastirChefLogo.png", // Path to your image asset
-                width: 100, // Adjust the size as needed
-                height: 100,
+              
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Image.asset(
+                  "lib/pages/src/images/bastirChefLogo.png", // Path to your image asset
+                  width: 100, // Adjust the size as needed
+                  height: 100,
+                ),
               ),
               TextField(
                 controller: _emailTextController,
@@ -118,12 +122,17 @@ class _LogInScreenState extends State<LogInScreen> {
               InkWell(
                 onTap: navigateToSignUp,
                 child: Container(
-                  child: const Text("Sign up", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),),
+                  width: screenWidth * 0.5,
                   padding: const EdgeInsets.symmetric(vertical: 12,),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(color: Colors.orange), // Orange border
                   ),
+                  child: const Text(
+                    "Sign up", 
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange,),
+                    textAlign: TextAlign.center,
+                    ),
                 ),
               ),
               Flexible(child: Container(), flex: 2),

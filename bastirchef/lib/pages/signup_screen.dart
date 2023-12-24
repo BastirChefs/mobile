@@ -62,6 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+        double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -70,13 +71,61 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Flexible(child: Container(), flex: 2),
-              TextFieldInput(textEditingController: _usernameTextController, hintText: 'Enter your username', textInputType: TextInputType.text,),
-              const SizedBox( height: 10),
-              TextFieldInput(textEditingController: _emailTextController, hintText: 'Enter your email', textInputType: TextInputType.emailAddress,),
-              const SizedBox( height: 10),
-              TextFieldInput(textEditingController: _passwordTextController, hintText: 'Enter your password', textInputType: TextInputType.text, isPass: true,),
-              const SizedBox( height: 10),
+              Flexible(child: Container(), flex: 1),
+              Image.asset(
+                "lib/pages/src/images/bastirChefLogo.png",
+                width: 100,
+                height: 100,
+              ),
+              const SizedBox(height: 30),
+              TextField(
+                controller: _usernameTextController,
+                decoration: InputDecoration(
+                  hintText: 'Enter your username',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: Colors.orange),
+                  ),
+                ),
+                keyboardType: TextInputType.text,
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: _emailTextController,
+                decoration: InputDecoration(
+                  hintText: 'Enter your email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: Colors.orange),
+                  ),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: _passwordTextController,
+                decoration: InputDecoration(
+                  hintText: 'Enter your password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: Colors.orange),
+                  ),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 24),
               InkWell(
                 onTap: signUpUser,
                 child: Container(
@@ -84,36 +133,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder( 
-                      borderRadius: BorderRadius.all(Radius.circular(4),),
-                    ),
-                    color: Colors.blue),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    color: Colors.orange,
+                  ),
                 ),
               ),
-              const SizedBox( height: 24),
-              Flexible(child: Container(), flex: 2),
-
-              Row(
+              const SizedBox(height: 24),
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: const Text("Do you already have an account? "),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  GestureDetector(
+                  InkWell(
                     onTap: navigateToLogIn,
                     child: Container(
-                      child: const Text("Log in", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),),
-                      padding: const EdgeInsets.symmetric(vertical: 8,),
+                      width: screenWidth * 0.5,
+                      padding: const EdgeInsets.symmetric(vertical: 12,),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: Colors.orange), // Orange border
+                      ),
+                      child: const Text(
+                        "Log in", 
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange,),
+                        textAlign: TextAlign.center,
+                        ),
                     ),
                   ),
-                ],
-              )
-            ],
 
-          )
-      ),) 
+
+
+                ],
+              ),
+              Flexible(child: Container(), flex: 2),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
