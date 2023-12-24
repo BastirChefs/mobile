@@ -6,9 +6,10 @@ class User {
   final String username;
   final DateTime createdAt;
   final List favoriteRecipes;
-  final List recipeLists;
+  final Map recipeLists;
   final List recipes;
   final List storage;
+  final List recipeHistory;
 
 
   const User({
@@ -20,6 +21,7 @@ class User {
     required this.recipeLists,
     required this.recipes,
     required this.storage,
+    required this.recipeHistory,
   });
 
   static User fromSnap(DocumentSnapshot snap) {
@@ -34,6 +36,7 @@ class User {
       recipeLists: snapshot["recipe_list"],
       recipes: snapshot["recipes"],
       storage: snapshot["storage"],
+      recipeHistory: snapshot["recipeHistory"],
     );
   }
 
@@ -46,5 +49,6 @@ class User {
     "recipe_list": recipeLists,
     "recipes": recipes,
     "storage": storage,
+    "recipeHistory": recipeHistory,
   };
 }

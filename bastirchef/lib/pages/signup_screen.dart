@@ -39,7 +39,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       favoriteRecipes: [],
       recipeLists: [],
       recipes: [],
-      storage: [],);
+      storage: [],
+      recipeHistory: [],);
     if (res == "success") {
       setState(() {
         _isLoading = false;

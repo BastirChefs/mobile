@@ -24,6 +24,7 @@ class AuthMethods {
     required List recipeLists,
     required List recipes,
     required List storage,
+    required List recipeHistory,
   }) async {
     String res = "Some error occured";
     try {
@@ -38,9 +39,10 @@ class AuthMethods {
           email: email,
           createdAt: DateTime.now(),
           favoriteRecipes: [],
-          recipeLists: [],
+          recipeLists: {},
           recipes: [],
           storage: [],
+          recipeHistory: [],
         );
 
         await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson(),);
