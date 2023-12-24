@@ -1,3 +1,4 @@
+import 'package:bastirchef/pages/recipe_display.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -56,7 +57,16 @@ class _FoodBoxState extends State<FoodBox> {
           // Data has been successfully fetched
           var recipeData = snapshot.data!.data() as Map<String, dynamic>;
 
-          return Container(
+          return InkWell( // Wrap with InkWell for tap functionality
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => RecipeDisplay(), // Navigate to RecipeDisplay page
+                ),
+              );
+            },
+          
+            child: Container(
 
             height: MediaQuery.of(context).size.height / 6,
             width: MediaQuery.of(context).size.width * 0.9,
@@ -127,6 +137,7 @@ class _FoodBoxState extends State<FoodBox> {
 
               ],
             ),
+          )
           );
         }
       },

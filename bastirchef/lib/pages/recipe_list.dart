@@ -39,7 +39,7 @@ class _RecipeListState extends State<RecipeList> {
                   fontSize: 25,
                 ),
               ),
-            ),
+          ),
               body: SingleChildScrollView(
                 child: Center(
                   child: Column(
