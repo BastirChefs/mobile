@@ -16,7 +16,7 @@ class ShoppingList extends StatefulWidget {
 class _ShoppingListState extends State<ShoppingList> {
   var userData = {};
   bool isLoading = false;
-  List<String> recipeListsNames = [];
+  Map<String, dynamic> items = {};
 
   @override
   void initState() {
@@ -37,11 +37,28 @@ class _ShoppingListState extends State<ShoppingList> {
       userData = userSnap.data()!;
       print(userData);
       
-      if (userData.containsKey('recipe_list') && userData['recipe_list'] is Map<String, dynamic>) {
-        recipeListsNames = userData['recipe_list'].keys.toList();
-        print(recipeListsNames);
+      if (userData.containsKey('shopping_list') && userData['shopping_list'] is Map<String, dynamic>) {
+        items = userData['shopping_list'];
+        print(items);
       }
       setState(() {});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  updateList () async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'shopping_list': items});
     } catch (e) {
       print(e);
     }
@@ -76,7 +93,27 @@ class _ShoppingListState extends State<ShoppingList> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
                     Text("hello"),
-                    Text("shopping items will be added here")
+                    Text("shopping items will be added here"),
+                        for(var item in items.entries) Row(
+                      children: <Widget>[
+                        Text("Ingredient: " + item.key + "\nAmount: " + item.value.toString() + "\n"),
+                        GestureDetector(
+                          onTap: () {
+                            items.remove(item.key);
+                            updateList();
+                          },
+                          child: Text("Buy\t", style: TextStyle(color: Colors.green, fontSize: 12.0),)
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            items.remove(item.key);
+                            updateList();
+                          },
+                          child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
+                        )
+                      ],
+                    )
+                    
 
                   ]))
           )
