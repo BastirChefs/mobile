@@ -18,7 +18,7 @@ class _HomepageState extends State<Homepage> {
   var userData = {};
   List<Map<String, dynamic>> allIngredients = [];
   List<dynamic> suggestedRecipeIds = [];
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -26,10 +26,7 @@ class _HomepageState extends State<Homepage> {
     getData();
   }
 
-  getData() async {
-    setState(() {
-      isLoading = true;
-    });
+  Future<void> getData() async {
     try {
       var userSnap = await FirebaseFirestore.instance
           .collection('users')
@@ -47,34 +44,41 @@ class _HomepageState extends State<Homepage> {
       allIngredients.forEach((doc) {
         print(doc);
       });
-      setState(() {});
-    } catch (e) {
-      print(e);
-    }
-    setState(() {
-      isLoading = false;
-    });
-    await getRecipeSuggestions();
-  }
-
-  Future<void> getRecipeSuggestions() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
+      
       final service = SuggestionService();
       const userId = "RietHUeDDXWyYFmhJTzCGP4B7gQ2";
-      final recipeIds = await service.makeSuggestion(userId);
+      suggestedRecipeIds = await service.makeSuggestion(userId);
+
       setState(() {
-        suggestedRecipeIds = recipeIds;
+        isLoading = false;
       });
+
     } catch (e) {
-      print('Error fetching recipe suggestions: $e');
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
     }
-    setState(() {
-      isLoading = false;
-    });
   }
+
+  // Future<void> getRecipeSuggestions() async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   try {
+  //     final service = SuggestionService();
+  //     const userId = "RietHUeDDXWyYFmhJTzCGP4B7gQ2";
+  //     final recipeIds = await service.makeSuggestion(userId);
+  //     setState(() {
+  //       suggestedRecipeIds = recipeIds;
+  //     });
+  //   } catch (e) {
+  //     print('Error fetching recipe suggestions: $e');
+  //   }
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -161,8 +165,12 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
             SizedBox(height: 10),
-            FoodBox(id: suggestedRecipeIds[0]),
-            FoodBox(id: suggestedRecipeIds[1]),
+            
+            if (suggestedRecipeIds.isNotEmpty)
+              FoodBox(id: suggestedRecipeIds[0]),
+            if (suggestedRecipeIds.length > 1)
+              FoodBox(id: suggestedRecipeIds[1]),
+            
             // FoodBox(),
             // FoodBox(),
             // FoodBox(),
