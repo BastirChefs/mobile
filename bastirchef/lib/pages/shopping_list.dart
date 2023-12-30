@@ -1,5 +1,6 @@
 import 'package:bastirchef/firebase_options.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
+import 'package:bastirchef/pages/storage_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -67,6 +68,42 @@ class _ShoppingListState extends State<ShoppingList> {
     });
   }
 
+  updateStorage(key, value) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      userData = userSnap.data()!;
+      print(userData);
+      var storage = userData['storage'];
+      print(storage);
+      
+      if (userData.containsKey('storage')) {        
+        if(storage[key] != null){
+          storage.update(key, (existingValue) => existingValue + value);
+        } else {
+          storage[key] = value;
+        }
+        print(storage);
+      }
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'shopping_list': items, 'storage': storage});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -101,6 +138,7 @@ class _ShoppingListState extends State<ShoppingList> {
                           onTap: () {
                             items.remove(item.key);
                             updateList();
+                            updateStorage(item.key, item.value);
                           },
                           child: Text("Buy\t", style: TextStyle(color: Colors.green, fontSize: 12.0),)
                         ),
