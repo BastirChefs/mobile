@@ -44,15 +44,14 @@ class _HomepageState extends State<Homepage> {
       allIngredients.forEach((doc) {
         print(doc);
       });
-      
+
       final service = SuggestionService();
-      const userId = "RietHUeDDXWyYFmhJTzCGP4B7gQ2";
+      var userId = FirebaseAuth.instance.currentUser!.uid;
       suggestedRecipeIds = await service.makeSuggestion(userId);
 
       setState(() {
         isLoading = false;
       });
-
     } catch (e) {
       print(e);
       setState(() {
@@ -165,12 +164,12 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
             SizedBox(height: 10),
-            
+
             if (suggestedRecipeIds.isNotEmpty)
               FoodBox(id: suggestedRecipeIds[0]),
             if (suggestedRecipeIds.length > 1)
               FoodBox(id: suggestedRecipeIds[1]),
-            
+
             // FoodBox(),
             // FoodBox(),
             // FoodBox(),
