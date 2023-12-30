@@ -14,8 +14,7 @@ class Storage extends StatefulWidget {
 class _StorageState extends State<Storage> {
   var userData = {};
   bool isLoading = false;
-  //storage map mi array mi olcak karar verip devam et
-  Map<String, int> userStorage = {};
+  Map<String, dynamic> userStorage = {};
 
   @override
   void initState() {
@@ -35,13 +34,29 @@ class _StorageState extends State<Storage> {
 
       userData = userSnap.data()!;
       print(userData);
+
+      userStorage = userData['storage'];
       
-      List<String> storedName = userData['storage'].keys.toList();
-      List<dynamic> storedAmount = userData['storage'].values.toList(); 
-      print(storedName);
-      print(storedAmount);
-      
-      setState(() {});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  updateStorage() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      print(userData);
+      userStorage = userData['storage'];
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'storage': userStorage});
     } catch (e) {
       print(e);
     }
@@ -83,7 +98,26 @@ class _StorageState extends State<Storage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
                     Text("hello"),
-                    Text("storage will be here")
+                    Text("storage will be here"),
+                    for(var item in userStorage.entries) Row(
+                      children: <Widget>[
+                        Text("Ingredient: " + item.key + "\nAmount: " + item.value.toString() + "\n"),
+                        GestureDetector(
+                          onTap: () {
+                            userStorage.update(item.key, (existingValue) => existingValue + 1);
+                            updateStorage();
+                          },
+                          child: Text("Add\t", style: TextStyle(color: Colors.green, fontSize: 12.0),)
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            userStorage.remove(item.key);
+                            updateStorage();
+                          },
+                          child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
+                        )
+                      ],
+                    )
 
                   ]))
           )
