@@ -163,7 +163,7 @@ class _HomepageState extends State<Homepage> {
                       //   10: "Filler",
                       //   11: "Filler"
                       // },
-                      selectedOptions: [2, 3],
+                      selectedOptions: [],
                       onChanged: (selectedIds) {
                         setState(() => selectedIds);
                         print(selectedIds);

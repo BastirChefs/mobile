@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:isolate';
+
 import 'package:bastirchef/pages/src/drop_down_text_field.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SearchOutput extends StatefulWidget {
-  final List<int>? options;
+  final List<String>? options;
   const SearchOutput({Key? key, required this.options}) : super(key:key);
 
   @override
@@ -16,7 +18,10 @@ class SearchOutput extends StatefulWidget {
   class _SearchOutputState extends State<SearchOutput> {
     bool isLoading = true;
     List<Map<String, dynamic>> allIngredients = [];
-    List<int> selectedIds = [];
+    List<Map<String, dynamic>> allRecipes = [];
+    List<String> recipeIds = [];
+    List<String> selectedIds = [];
+    List<String> outputRecipes = [];
 
     @override
     void initState() {
@@ -31,9 +36,13 @@ class SearchOutput extends StatefulWidget {
         allIngredients = querySnapshot.docs
             .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
             .toList();
-        allIngredients.forEach((doc) {
-          print(doc);
-        });
+          
+        final recipeSnapshot =
+            await FirebaseFirestore.instance.collection('recipes').get();
+        allRecipes = recipeSnapshot.docs
+            .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+        recipeSnapshot.docs.forEach((doc) => recipeIds.add(doc.id));
 
         setState(() {
           isLoading = false;
@@ -54,27 +63,15 @@ class SearchOutput extends StatefulWidget {
       return options;
     }
 
-    searchOutputRecipes(options) async{
-      List<Map<String, dynamic>> allIngredients;
-      try {
-        QuerySnapshot querySnapshot =
-            await FirebaseFirestore.instance.collection('ingredients').get();
-        allIngredients = querySnapshot.docs
-            .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
-            .toList();
-        allIngredients.forEach((doc) {
-          print(doc);
-        });
-
-        setState(() {
-          isLoading = false;
-        });
-      } catch (e) {
-        print(e);
-        setState(() {
-          isLoading = false;
-        });
+    searchOutputRecipes(options) {
+      for(int i = 0; i < allRecipes.length; i++){
+        for(int j = 0; j < options.length; j++){
+          if(allRecipes[i]['ingredients'][options[j]] != null){
+            outputRecipes.add(recipeIds[i]);
+          }
+        }
       }
+      print(outputRecipes);
     }
 
     @override
@@ -108,7 +105,7 @@ class SearchOutput extends StatefulWidget {
                             selectedOptions: [],
                             onChanged: (selectedIds) {
                               setState(() => selectedIds);
-                              print(selectedIds);
+                              searchOutputRecipes(selectedIds);
                             },
                             multiple: true,
                         ),
@@ -117,7 +114,8 @@ class SearchOutput extends StatefulWidget {
                     ),
                   ),
                     SizedBox(height: 10),
-                    FoodBox(id: "x0KwRvsB0sHvGPZpieKe"),
+                    for(var item in outputRecipes) 
+                      FoodBox(id: item),
                     // FoodBox(),
                     // FoodBox(),
                     // FoodBox(),

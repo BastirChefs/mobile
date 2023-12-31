@@ -9,8 +9,8 @@ class DropDownTextField extends StatefulWidget {
   final String hint;
   final Map<int, String> options;
   final String buttonText;
-  final List<int>? selectedOptions;
-  final Function(List<int>?)? onChanged;
+  final List<String>? selectedOptions;
+  final Function(List<String>?)? onChanged;
   final bool multiple;
 
   //optional parameters
@@ -86,7 +86,7 @@ class _DropDownTextFieldState extends State<DropDownTextField> {
         selectedItems: (List<dynamic> selectedList) {
           widget.textEditingController.text =
               tmpImplode(widget.options, selectedList);
-          widget.onChanged?.call(List<int>.from(selectedList));
+          widget.onChanged?.call(List<String>.from(selectedList));
         },
         enableMultipleSelection: widget.multiple,
         isSearchVisible: widget.isSearchVisible,

@@ -19,7 +19,7 @@ class DropDown {
   final String buttonText;
 
   // This will give the the selected items from data.
-  final List<int>? selectedOptions;
+  final List<String>? selectedOptions;
 
   /// This will give the call back to the selected items from list.
   final Function(List<dynamic>)? selectedItems;
@@ -105,7 +105,7 @@ class MainBody extends StatefulWidget {
 class _MainBodyState extends State<MainBody> {
   /// This list will set when the list of data is not available.
   Map<int, String> mainList = {};
-  late List<int> selectedList;
+  late List<String> selectedList;
 
   @override
   void initState() {
@@ -192,7 +192,7 @@ class _MainBodyState extends State<MainBody> {
                   final mainListKeys = mainList.keys.toList();
                   final mainListValues = mainList.values.toList();
 
-                  bool isSelected = selectedList.contains(mainListKeys[index]);
+                  bool isSelected = selectedList.contains(mainListValues[index]);
 
                   return InkWell(
                     onTap: widget.dropDown.enableMultipleSelection
@@ -215,9 +215,9 @@ class _MainBodyState extends State<MainBody> {
                               ? GestureDetector(
                                   onTap: () {
                                     !isSelected
-                                        ? selectedList.add(mainListKeys[index])
+                                        ? selectedList.add(mainListValues[index])
                                         : selectedList
-                                            .remove(mainListKeys[index]);
+                                            .remove(mainListValues[index]);
                                     setState(() {
                                       //selectedList;
                                     });
