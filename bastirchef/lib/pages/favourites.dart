@@ -79,6 +79,7 @@ class _FavouritesState extends State<Favourites> {
                   children : [
                     SizedBox(height: 30),
                     for(var id in favourites) FoodBox(id: id),
+
                   ]))
           )
       ),
