@@ -153,7 +153,7 @@ class _HomepageState extends State<Homepage> {
                         10: "Filler",
                         11: "Filler"
                       },
-                      selectedOptions: [2, 3],
+                      selectedOptions: [],
                       onChanged: (selectedIds) {
                         //setState(() => selectedIds);
                       },
@@ -169,6 +169,8 @@ class _HomepageState extends State<Homepage> {
               FoodBox(id: suggestedRecipeIds[0]),
             if (suggestedRecipeIds.length > 1)
               FoodBox(id: suggestedRecipeIds[1]),
+
+
 
             // FoodBox(),
             // FoodBox(),

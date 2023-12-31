@@ -109,14 +109,23 @@ class _FoodBoxState extends State<FoodBox> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      recipeData['recipeName'] ?? 'Recipe Name Not Available',
-                      style: TextStyle(
-                        color: Color(0xFFE3E3E3),
-                        fontSize: 20,
-                        fontWeight: FontWeight.normal,
+                    Container(
+                    width: 150, // Adjust the width of the image container
+                    height: 55,
+                      child: Text(
+                        recipeData['recipeName'] ?? 'Recipe Name Not Available',
+                        maxLines: 2, // Set maximum lines to 2
+                        overflow: TextOverflow.ellipsis, // Truncate text with ellipsis if it exceeds 2 lines
+                        softWrap: true, // Enable wrapping of text onto the next line
+                        style: TextStyle(
+                          color: Color(0xFFE3E3E3),
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
+
                     ),
+
                     SizedBox(height: 10),
                     Row(children:[
                       Icon(Icons.favorite_border_outlined,
