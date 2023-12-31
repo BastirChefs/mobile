@@ -38,7 +38,7 @@ class SearchOutput extends StatefulWidget {
             .toList();
           
         final recipeSnapshot =
-            await FirebaseFirestore.instance.collection('recipes').get();
+            await FirebaseFirestore.instance.collection('recipes').orderBy('reactions.delicios', descending: true).get();
         allRecipes = recipeSnapshot.docs
             .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
             .toList();
