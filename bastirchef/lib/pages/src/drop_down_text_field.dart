@@ -94,7 +94,7 @@ class _DropDownTextFieldState extends State<DropDownTextField> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SearchOutput(),
+              builder: (context) => SearchOutput(options: widget.selectedOptions),
             ),
           );
         },
