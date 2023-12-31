@@ -19,6 +19,7 @@ class _HomepageState extends State<Homepage> {
   List<Map<String, dynamic>> allIngredients = [];
   List<dynamic> suggestedRecipeIds = [];
   bool isLoading = true;
+  List<int> selectedIds = [];
 
   @override
   void initState() {
@@ -58,6 +59,14 @@ class _HomepageState extends State<Homepage> {
         isLoading = false;
       });
     }
+  }
+
+  Map<int, String> getOptions() {
+    Map<int, String> options = {};
+    for(int i = 0; i < allIngredients.length; i++){
+      options[i] = allIngredients[i]['name'];
+    }
+    return options;
   }
 
   // Future<void> getRecipeSuggestions() async {
@@ -140,22 +149,24 @@ class _HomepageState extends State<Homepage> {
                       buttonText: "Search",
                       textEditingController: TextEditingController(),
                       hint: 'Select Ingredients',
-                      options: {
-                        1: "Tomato",
-                        2: "Patato",
-                        3: "Chicken",
-                        4: "Pasta",
-                        5: "Pesto Sauce",
-                        6: "Arrabiata Sauce",
-                        7: "Filler",
-                        8: "Filler",
-                        9: "Filler",
-                        10: "Filler",
-                        11: "Filler"
-                      },
+                      options: getOptions(),
+                      // {
+                      //   1: "Tomato",
+                      //   2: "Patato",
+                      //   3: "Chicken",
+                      //   4: "Pasta",
+                      //   5: "Pesto Sauce",
+                      //   6: "Arrabiata Sauce",
+                      //   7: "Filler",
+                      //   8: "Filler",
+                      //   9: "Filler",
+                      //   10: "Filler",
+                      //   11: "Filler"
+                      //
                       selectedOptions: [],
                       onChanged: (selectedIds) {
-                        //setState(() => selectedIds);
+                        setState(() => selectedIds);
+                        print(selectedIds);
                       },
                       multiple: true,
                     ),
