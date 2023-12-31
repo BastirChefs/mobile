@@ -16,7 +16,7 @@ class SearchOutput extends StatefulWidget {
     State<SearchOutput> createState() => _SearchOutputState();
 }
   class _SearchOutputState extends State<SearchOutput> {
-    bool isLoading = true;
+    bool isLoading = false;
     List<Map<String, dynamic>> allIngredients = [];
     List<Map<String, dynamic>> allRecipes = [];
     List<String> recipeIds = [];
@@ -44,6 +44,7 @@ class SearchOutput extends StatefulWidget {
             .toList();
         recipeSnapshot.docs.forEach((doc) => recipeIds.add(doc.id));
 
+        searchOutputRecipes(widget.options);
         setState(() {
           isLoading = false;
         });
@@ -63,7 +64,11 @@ class SearchOutput extends StatefulWidget {
       return options;
     }
 
-    searchOutputRecipes(options) {
+    Future<void> searchOutputRecipes(options) async {
+      setState(() {
+          isLoading = true;
+        });
+
       for(int i = 0; i < allRecipes.length; i++){
         for(int j = 0; j < options.length; j++){
           if(allRecipes[i]['ingredients'][options[j]] != null){
@@ -71,59 +76,63 @@ class SearchOutput extends StatefulWidget {
           }
         }
       }
-      print(outputRecipes);
+      setState(() {
+        isLoading = false;
+      });
     }
 
     @override
     Widget build(BuildContext context) {
-      return MaterialApp(  
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          backgroundColor: Color(0xFFE3E3E3),
-          body: SingleChildScrollView(
-              child: Column(
-                  children : [Container(
-
-                    height: MediaQuery.of(context).size.height * 0.20,
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(top: 75, bottom: 10, right: 30, left: 30),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //SizedBox(height: 15,),
-                        Container(
-                          decoration: BoxDecoration(
-                            color : Color.fromARGB(255, 187, 187, 187),
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: DropDownTextField(
-                            buttonText: "Search",
-                            textEditingController: TextEditingController(),
-                            hint: 'Select Ingredients',
-                            options: getOptions(),
-                            selectedOptions: [],
-                            onChanged: (selectedIds) {
-                              setState(() => selectedIds);
-                              searchOutputRecipes(selectedIds);
-                            },
-                            multiple: true,
-                        ),
-                        )
-                      ],
-                    ),
-                  ),
-                    SizedBox(height: 10),
-                    for(var item in outputRecipes) 
-                      FoodBox(id: item),
-                    // FoodBox(),
-                    // FoodBox(),
-                    // FoodBox(),
-                    // FoodBox(),
-
-                  ])
-          )
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Color(0xFFE3E3E3),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.20,
+                width: MediaQuery.of(context).size.width,
+                padding:
+                    EdgeInsets.only(top: 75, bottom: 10, right: 30, left: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 187, 187, 187),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: DropDownTextField(
+                        buttonText: "Search",
+                        textEditingController: TextEditingController(),
+                        hint: 'Select Ingredients',
+                        options: getOptions(),
+                        selectedOptions: [],
+                        onChanged: (selectedIds) async {
+                          setState(() => selectedIds);
+                          await searchOutputRecipes(selectedIds);
+                        },
+                        multiple: true,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              if (isLoading)
+                CircularProgressIndicator()
+              else
+                Column(
+                  children: [
+                    for (var item in outputRecipes) FoodBox(id: item),
+                  ],
+                ),
+            ],
+          ),
         ),
-      );
+      ),
+    );
     }
   }
