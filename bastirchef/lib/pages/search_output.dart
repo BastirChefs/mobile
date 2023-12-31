@@ -72,7 +72,9 @@ class SearchOutput extends StatefulWidget {
       for(int i = 0; i < allRecipes.length; i++){
         for(int j = 0; j < options.length; j++){
           if(allRecipes[i]['ingredients'][options[j]] != null){
-            outputRecipes.add(recipeIds[i]);
+            if(!outputRecipes.contains(recipeIds[i])){
+              outputRecipes.add(recipeIds[i]);
+            }
           }
         }
       }
