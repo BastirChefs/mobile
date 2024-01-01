@@ -369,19 +369,20 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                         recipeData['comments']
                                                             [index];
                                                     return ListTile(
-                                                      // leading: comment[
-                                                      //             'userImage'] !=
-                                                      //         ''
-                                                      //     ? CircleAvatar(
-                                                      //         backgroundImage:
-                                                      //             NetworkImage(
-                                                      //                 comment[
-                                                      //                     'userImage']))
-                                                      //     : CircleAvatar(
-                                                      //         child: Icon(Icons
-                                                      //             .person)),
+                                                      leading: comment[
+                                                                  'userImage'] !=
+                                                              ''
+                                                          ? CircleAvatar(
+                                                              backgroundImage:
+                                                                  NetworkImage(
+                                                                      comment[
+                                                                          'userImage']))
+                                                          : CircleAvatar(
+                                                              child: Icon(Icons
+                                                                  .person)),
                                                       title: Text(comment[
-                                                          'comment']), // Format this as needed
+                                                          'comment']),
+                                                      subtitle: Text(comment['userId'].toString()),
                                                     );
                                                   },
                                                 ),
