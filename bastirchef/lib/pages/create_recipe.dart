@@ -1,9 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
 
+import 'dart:typed_data';
+
 import 'package:bastirchef/pages/src/drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:bastirchef/resources/storage_methods.dart';
 import 'src/button.dart'; // Ensure this import is correct for your CustomButton widget
 
 class CreateRecipe extends StatefulWidget {
@@ -17,6 +22,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   List<Map<String, dynamic>> allIngredients = [];
   bool isLoading = false;
   List<dynamic> selectedIds = [];
+  Uint8List? _file;
 
   @override
   void initState() {
@@ -62,35 +68,48 @@ class _CreateRecipeState extends State<CreateRecipe> {
     setState(() {
       isLoading = true;
     });
+    String photoUrl = "";
     try {
-      Map<String,dynamic> map ={'unit': 'gr', 'amount': 1};
-      Map<String, Map<String,dynamic>> ings = Map.fromIterable(
+      if (_file != null) {
+        photoUrl = await StorageMethods().uploadImageToStorage('posts', _file!, false);
+        print('Image uploaded successfully. URL: $photoUrl');
+      } else {
+        print('Error: _file is null.');
+      }
+
+      print("im here");
+
+      Map<String, dynamic> map = {'unit': 'gr', 'amount': 1};
+      Map<String, Map<String, dynamic>> ings = Map.fromIterable(
         selectedIds,
         key: (k) => k,
         value: (v) => map,
       );
+
       var recipe = {
         'recipeName': _titleTextController.text.toString(),
         'recipeText': _descriptionTextController.text.toString(),
         'comments': [],
-        'reactions':{ 'delicios': 0, 'looksGood': 0, 'oghk': 0},
+        'reactions': {'delicious': 0, 'looksGood': 0, 'oghk': 0},
         'timeCreated': DateTime.now(),
         'ingredients': ings,
         'mainIngredients': selectedIds,
         'userId': FirebaseAuth.instance.currentUser!.uid,
+        'image': photoUrl,
       };
-      await FirebaseFirestore.instance
-        .collection('recipes')
-        .add(recipe); 
-      } catch (e) {
-      print(e);
-      }
-    
+
+      await FirebaseFirestore.instance.collection('recipes').add(recipe);
+      print('Recipe added successfully.');
+    } catch (e, stackTrace) {
+      print('Error sharing recipe: $e\n$stackTrace');
+      // Handle the error or throw an exception
+      // throw e;
+    }
+
     setState(() {
       isLoading = false;
     });
   }
-
 
   void _addIngredient() {
     DropDownState(
@@ -115,11 +134,68 @@ class _CreateRecipeState extends State<CreateRecipe> {
     "Example Ingredient 2"
   ];
 
+  pickImage(ImageSource source) async {
+    final ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: source);
+    if (file != null) {
+      return await file.readAsBytes();
+    }
+  }
+
+  _selectImage(BuildContext parentContext) async {
+    return showDialog(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Text('Select a Photo'),
+          children: <Widget>[
+            SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Take a photo'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Uint8List file = await pickImage(ImageSource.camera);
+                  setState(() {
+                    _file = file;
+                  });
+                }),
+            SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Choose from Gallery'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  Uint8List file = await pickImage(ImageSource.gallery);
+                  setState(() {
+                    _file = file;
+                  });
+                }),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
   TextEditingController _titleTextController = TextEditingController();
   TextEditingController _descriptionTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _file == null
+        ? Center(
+            child: IconButton(
+              icon: const Icon(
+                Icons.upload,
+              ),
+              onPressed: () => _selectImage(context),
+            ),
+          )
+        :Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF282828),
         leading: GestureDetector(
@@ -200,6 +276,24 @@ class _CreateRecipeState extends State<CreateRecipe> {
                 maxLines: null,
               ),
               SizedBox(height: 20),
+              SizedBox(
+                height: 45.0,
+                width: 45.0,
+                child: AspectRatio(
+                  aspectRatio: 487 / 451,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: _file != null
+                          ? DecorationImage(
+                              fit: BoxFit.fill,
+                              alignment: FractionalOffset.topCenter,
+                              image: MemoryImage(_file!),
+                            )
+                          : null, // Return null if _file is null
+                    ),
+                  ),
+                ),
+              ),
               CustomButton(
                 text: 'Share',
                 onPressed: () {
