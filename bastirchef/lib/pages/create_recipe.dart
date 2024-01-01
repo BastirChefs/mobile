@@ -2,6 +2,8 @@
 
 import 'package:bastirchef/pages/src/drop_down.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'src/button.dart'; // Ensure this import is correct for your CustomButton widget
 
 class CreateRecipe extends StatefulWidget {
@@ -10,13 +12,97 @@ class CreateRecipe extends StatefulWidget {
 }
 
 class _CreateRecipeState extends State<CreateRecipe> {
+  var recipeData = {};
+  var userData = {};
+  List<Map<String, dynamic>> allIngredients = [];
+  bool isLoading = false;
+  List<dynamic> selectedIds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var userSnap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+      userData = userSnap.data()!;
+
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('ingredients').get();
+      allIngredients = querySnapshot.docs
+          .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+      
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Map<int, String> getOptions() {
+    Map<int, String> options = {};
+    for(int i = 0; i < allIngredients.length; i++){
+      options[i] = allIngredients[i]['name'];
+    }
+    return options;
+  }
+
+  shareRecipe() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      Map<String,dynamic> map ={'unit': 'gr', 'amount': 1};
+      Map<String, Map<String,dynamic>> ings = Map.fromIterable(
+        selectedIds,
+        key: (k) => k,
+        value: (v) => map,
+      );
+      var recipe = {
+        'recipeName': _titleTextController.text.toString(),
+        'recipeText': _descriptionTextController.text.toString(),
+        'comments': [],
+        'reactions':{ 'delicios': 0, 'looksGood': 0, 'oghk': 0},
+        'timeCreated': DateTime.now(),
+        'ingredients': ings,
+        'mainIngredients': selectedIds,
+        'userId': FirebaseAuth.instance.currentUser!.uid,
+      };
+      await FirebaseFirestore.instance
+        .collection('recipes')
+        .add(recipe); 
+      } catch (e) {
+      print(e);
+      }
+    
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+
   void _addIngredient() {
     DropDownState(
       DropDown(
         buttonText: "Add",
-        options: {1: "Tomato", 2: "Potato", 3: "Chicken", 4: "Pasta", 5: "Pesto Sauce"},
+        options: getOptions(),
         selectedOptions: [],
         selectedItems: (List<dynamic> selectedList) {
+          setState(() {
+            selectedIds = selectedList;
+            print(selectedIds);
+          });
           // Logic to add selected ingredients to the ingredients list
         },
         enableMultipleSelection: true,
@@ -98,7 +184,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: ingredients
+                  children: selectedIds
                       .map((ingredient) => Text(ingredient))
                       .toList(),
                 ),
@@ -118,6 +204,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
                 text: 'Share',
                 onPressed: () {
                   print('Share');
+                  shareRecipe();
                 },
               ),
             ],

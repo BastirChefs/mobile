@@ -123,7 +123,8 @@ class _RecipesByMeState extends State<RecipesByMe> {
                             update();
                           },
                           child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
-                        )
+                        ),
+                        SizedBox(height: 20),
                       ],),
                   ]))
           )
