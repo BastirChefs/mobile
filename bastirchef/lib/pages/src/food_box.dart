@@ -61,7 +61,7 @@ class _FoodBoxState extends State<FoodBox> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => RecipeDisplay(), // Navigate to RecipeDisplay page
+                  builder: (context) => RecipeDisplay(id: widget.id), // Navigate to RecipeDisplay page
                 ),
               );
             },
