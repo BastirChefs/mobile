@@ -484,6 +484,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                       padding: EdgeInsets.all(8.0),
                       margin:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                      width: MediaQuery.of(context).size.width - 16,
                       decoration: BoxDecoration(
                         color: Colors.grey[300], // Grey color for the container
                         borderRadius: BorderRadius.circular(10.0),
