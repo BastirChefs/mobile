@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class SuggestionService {
   final String _baseUrl =
-      'https://us-central1-bastirchef-3aeef.cloudfunctions.net/makeSuggestion';
+      'https://europe-central2-bastirchef-3aeef.cloudfunctions.net/makeSuggestion';
 
   Future<List<dynamic>> makeSuggestion(String userId) async {
     final uri = Uri.parse('$_baseUrl?userId=$userId');
