@@ -55,7 +55,7 @@ class _RecipeListState extends State<RecipeList> {
                         ),
                       ),
                       SizedBox(height: 20), // Optional: to provide some spacing after the title
-                      FoodBox(id: widget.recipes[0]),
+                      for(var item in widget.recipes) FoodBox(id: item),
                       // FoodBox(),
                     ],
                   ),

@@ -20,6 +20,7 @@ class _ProfileState extends State<Profile> {
   var userData = {};
   bool isLoading = false;
   List<String> recipeListsNames = [];
+  String newListName = "";
 
   @override
   void initState() {
@@ -45,6 +46,45 @@ class _ProfileState extends State<Profile> {
         print(recipeListsNames);
       }
       setState(() {});
+    } catch (e) {
+      print(e);
+    }
+    updateRecipeList();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  removeList(index) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'recipe_list.$index': FieldValue.delete()});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  updateRecipeList() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'recipe_list.$newListName': [],});
+      
+      setState(() {
+        recipeListsNames.add(newListName);
+      });
     } catch (e) {
       print(e);
     }
@@ -226,9 +266,8 @@ class _ProfileState extends State<Profile> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    setState(() {
-                                      recipeListsNames.add('New Recipe List');
-                                    });
+                                    newListName = 'New Recipe List';
+                                    updateRecipeList();
                                   },
                                   child: Icon(
                                     Icons.add,
@@ -262,6 +301,7 @@ class _ProfileState extends State<Profile> {
                                     trailing: GestureDetector(
                                       onTap: () {
                                         setState(() {
+                                          removeList(recipeListsNames[index]);
                                           recipeListsNames.removeAt(index);
                                         });
                                       },
