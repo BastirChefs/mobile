@@ -129,6 +129,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     setState(() {
       isLoading = false;
     });
+    print(missingItems);
     return missingItems;
   }
 
@@ -156,6 +157,87 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            List missingItems = checkMissingIngredients();
+            if (missingItems.isEmpty) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("All Set!"),
+                    content: Text(
+                        "You don't have any missing ingredients! You can start making the recipe."),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text("OK"),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Missing Ingredients"),
+                    content: Container(
+                      width: double.maxFinite, // Make the dialog wider
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                              "Do you want to add these ingredients to your shopping list?"),
+                          SizedBox(height: 16),
+                          SingleChildScrollView(
+                            child: ListBody(
+                              children: missingItems.map((item) {
+                                return Text(
+                                    "•    ${item.keys.first}: ${item.values.first}");
+                              }).toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text("Add to Shopping List"),
+                        onPressed: () {
+                          // Add functionality to add items to shopping list
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                      TextButton(
+                        child: Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          },
+
+          icon: Icon(Icons.question_mark_rounded,
+              color: Colors.white), // White icon
+          label: Text('Check My Storage',
+              style: TextStyle(color: Colors.white)), // White text
+          backgroundColor: Color(0xFFD75912), // Custom color
+          elevation: 5.0, // Adds a slight shadow for depth
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+                Radius.circular(15)), // Rounded corners for a softer look
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation
+            .endFloat, // Position at the bottom right
         body: isLoading
             ? Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
@@ -194,30 +276,42 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.add, color: Colors.white), // Add to recipe list icon
+                                icon: Icon(Icons.add,
+                                    color: Colors
+                                        .white), // Add to recipe list icon
                                 onPressed: () {
                                   showModalBottomSheet(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      String selectedListName = userData['recipe_list'].keys.first; // Default to the first list
+                                      String selectedListName = userData[
+                                              'recipe_list']
+                                          .keys
+                                          .first; // Default to the first list
                                       return StatefulBuilder(
-                                        builder: (BuildContext context, StateSetter setState) {
+                                        builder: (BuildContext context,
+                                            StateSetter setState) {
                                           return Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Padding(
                                                 padding: EdgeInsets.all(16.0),
-                                                child: Text("Which recipe list would you like to add this recipe to?"),
+                                                child: Text(
+                                                    "Which recipe list would you like to add this recipe to?"),
                                               ),
-                                              for (String listName in userData['recipe_list'].keys)
+                                              for (String listName
+                                                  in userData['recipe_list']
+                                                      .keys)
                                                 ListTile(
                                                   title: Text(listName),
                                                   leading: Radio(
                                                     value: listName,
-                                                    groupValue: selectedListName,
+                                                    groupValue:
+                                                        selectedListName,
                                                     onChanged: (String? value) {
                                                       if (value != null) {
-                                                        setState(() => selectedListName = value);
+                                                        setState(() =>
+                                                            selectedListName =
+                                                                value);
                                                       }
                                                     },
                                                   ),
@@ -225,8 +319,10 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                               ElevatedButton(
                                                 child: Text("Add"),
                                                 onPressed: () {
-                                                  Navigator.pop(context); // Close the bottom sheet
-                                                  addToList(selectedListName); // Call the function with selected list name
+                                                  Navigator.pop(
+                                                      context); // Close the bottom sheet
+                                                  addToList(
+                                                      selectedListName); // Call the function with selected list name
                                                 },
                                               ),
                                             ],
@@ -237,7 +333,6 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                   );
                                 },
                               ),
-
                               Row(
                                 children: [
                                   IconButton(
