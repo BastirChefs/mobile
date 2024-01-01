@@ -63,6 +63,8 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     setState(() {
       isLoading = true;
     });
+    var favList = userData['favorite_recipes'];
+    favList.add(widget.id);
     var currentLikes = recipeData['reactions']['delicios'];
     try {
       await FirebaseFirestore.instance
@@ -73,7 +75,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set({'favorite_recipes': widget.id}, SetOptions(merge: true));
+          .update({'favorite_recipes': favList});
     } catch (e) {
       print(e);
     }
@@ -86,18 +88,21 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     setState(() {
       isLoading = true;
     });
+    List allComments = recipeData['comments'];
     try {
       Map commentMap = {
         'comment': comment,
         'createdAt': DateTime.now(),
         'userId': username,
+        'userImage': '',
       };
       print(commentMap);
+      allComments.add(commentMap);
 
       await FirebaseFirestore.instance
           .collection('recipes')
           .doc(widget.id)
-          .set({'comments': commentMap}, SetOptions(merge: true));
+          .update({'comments': allComments});
     } catch (e) {
       print(e);
     }
@@ -138,7 +143,8 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
       isLoading = true;
     });
     try {
-      var addedList = userData['recipe_list'][listName].add(widget.id);
+      List addedList = userData['recipe_list'][listName];
+      addedList.add(widget.id);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -363,17 +369,17 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                         recipeData['comments']
                                                             [index];
                                                     return ListTile(
-                                                      leading: comment[
-                                                                  'userImage'] !=
-                                                              ''
-                                                          ? CircleAvatar(
-                                                              backgroundImage:
-                                                                  NetworkImage(
-                                                                      comment[
-                                                                          'userImage']))
-                                                          : CircleAvatar(
-                                                              child: Icon(Icons
-                                                                  .person)),
+                                                      // leading: comment[
+                                                      //             'userImage'] !=
+                                                      //         ''
+                                                      //     ? CircleAvatar(
+                                                      //         backgroundImage:
+                                                      //             NetworkImage(
+                                                      //                 comment[
+                                                      //                     'userImage']))
+                                                      //     : CircleAvatar(
+                                                      //         child: Icon(Icons
+                                                      //             .person)),
                                                       title: Text(comment[
                                                           'comment']), // Format this as needed
                                                     );
@@ -414,7 +420,8 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                                   .text);
                                                           commentController
                                                               .clear(); // Clear the text field after sending the comment
-                                                        }
+                                                        } 
+                                                        setState(() {});
                                                       },
                                                     ),
                                                   ],
