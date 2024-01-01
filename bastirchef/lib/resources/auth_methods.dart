@@ -42,6 +42,7 @@ class AuthMethods {
           recipeLists: {},
           recipes: [],
           storage: {},
+          shopping_list: {},
           recipeHistory: [],
         );
 

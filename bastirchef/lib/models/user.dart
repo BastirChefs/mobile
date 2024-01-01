@@ -9,6 +9,7 @@ class User {
   final Map recipeLists;
   final List recipes;
   final Map storage;
+  final Map shopping_list;
   final List recipeHistory;
 
 
@@ -21,6 +22,7 @@ class User {
     required this.recipeLists,
     required this.recipes,
     required this.storage,
+    required this.shopping_list,
     required this.recipeHistory,
   });
 
@@ -36,6 +38,7 @@ class User {
       recipeLists: snapshot["recipe_list"],
       recipes: snapshot["recipes"],
       storage: snapshot["storage"],
+      shopping_list: snapshot["shopping_list"],
       recipeHistory: snapshot["recipeHistory"],
     );
   }
@@ -49,6 +52,7 @@ class User {
     "recipe_list": recipeLists,
     "recipes": recipes,
     "storage": storage,
+    "shopping_list": shopping_list,
     "recipeHistory": recipeHistory,
   };
 }
