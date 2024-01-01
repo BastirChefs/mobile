@@ -21,6 +21,7 @@ class _ProfileState extends State<Profile> {
   bool isLoading = false;
   List<String> recipeListsNames = [];
   String newListName = "";
+  TextEditingController newListNameController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +29,11 @@ class _ProfileState extends State<Profile> {
     getData();
   }
 
+  @override
+  void dispose() {
+    newListNameController.dispose();
+    super.dispose();
+  }
   getData() async {
     setState(() {
       isLoading = true;
@@ -266,15 +272,38 @@ class _ProfileState extends State<Profile> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    newListName = 'New Recipe List';
-                                    updateRecipeList();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("New Recipe List"),
+                                          content: TextField(
+                                            controller: newListNameController,
+                                            decoration: InputDecoration(hintText: "Enter List Name"),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text("Add", style: TextStyle(color: Color(0xFFD75912))),
+                                              onPressed: () {
+                                                newListName = newListNameController.text;
+                                                Navigator.of(context).pop(); // Close the dialog
+                                                updateRecipeList();
+                                                newListNameController.clear(); // Clear the text field
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                   },
                                   child: Icon(
                                     Icons.add,
                                     size: 24.0,
-                                    color: Color(0xFFD75912),
+                                    color: Color(0xFFD75912), // Orange color for the icon
                                   ),
                                 ),
+
+
                               ],
                             ),
                             SizedBox(height: 16.0),
@@ -315,7 +344,10 @@ class _ProfileState extends State<Profile> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => RecipeList(recipes: userData['recipe_list'][recipeListsNames[index]]),
+                                          builder: (context) => RecipeList(
+                                          recipes: userData['recipe_list'][recipeListsNames[index]],
+                                          recipeListName: recipeListsNames[index], // Pass the recipe list name here
+                                        ),
                                         ),
                                       );
                                     },

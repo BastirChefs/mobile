@@ -5,7 +5,8 @@ import 'package:bastirchef/pages/src/food_box.dart';
 
 class RecipeList extends StatefulWidget {
   final List recipes;
-  const RecipeList({Key? key, required this.recipes}) : super(key:key);
+  final String recipeListName; // Add this line to accept the recipe list name
+  const RecipeList({Key? key, required this.recipes, required this.recipeListName}) : super(key:key); // Modify the constructor
 
   @override
   State<RecipeList> createState() => _RecipeListState();
@@ -48,7 +49,7 @@ class _RecipeListState extends State<RecipeList> {
                     children: [
                       SizedBox(height: 30),
                       Text(
-                        "Recipe List Name Placeholder", // Replace with your actual title
+                         widget.recipeListName, // Replace with your actual title
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
