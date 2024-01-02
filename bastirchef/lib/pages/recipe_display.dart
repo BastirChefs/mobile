@@ -102,13 +102,18 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     });
   }
 
-    removeFromFav(id) async {
+  removeFromFav(id) async {
     setState(() {
       isLoading = true;
     });
     try {
       List<dynamic> favs = userData['favorite_recipes'];
+      var currentLikes = recipeData['reactions']['delicios'];
       favs.remove(id);
+      await FirebaseFirestore.instance
+          .collection('recipes')
+          .doc(id)
+          .update({'reactions.delicios': currentLikes - 1});
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)

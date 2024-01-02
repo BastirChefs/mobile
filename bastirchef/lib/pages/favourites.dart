@@ -58,6 +58,16 @@ class _FavouritesState extends State<Favourites> {
     try {
       favourites = userData['favorite_recipes'];
       favourites.remove(id);
+      var recipeSnap = await FirebaseFirestore.instance
+          .collection('recipes')
+          .doc(id)
+          .get();
+      var recipeData = recipeSnap.data()!;
+      var currentLikes = recipeData['reactions']['delicios'];
+      await FirebaseFirestore.instance
+          .collection('recipes')
+          .doc(id)
+          .update({'reactions.delicios': currentLikes - 1});
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
