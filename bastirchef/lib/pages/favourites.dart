@@ -56,12 +56,12 @@ class _FavouritesState extends State<Favourites> {
       isLoading = true;
     });
     try {
-      List<dynamic> favs = userData['favorite_recipes'];
-      favs.remove(id);
+      favourites = userData['favorite_recipes'];
+      favourites.remove(id);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'favorite_recipes': favs});
+          .update({'favorite_recipes': favourites});
     } catch (e) {
       print(e);
     }
