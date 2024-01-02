@@ -2,15 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:bastirchef/models/user.dart' as model;
+import 'package:bastirchef/services/notification_service.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final _notificationService = NotificationService();
 
   Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
 
-    DocumentSnapshot snap = await _firestore.collection('users').doc(currentUser.uid).get();
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
 
     return model.User.fromSnap(snap);
   }
@@ -28,8 +31,9 @@ class AuthMethods {
   }) async {
     String res = "Some error occured";
     try {
-      if(email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
-        UserCredential cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
+        UserCredential cred = await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
 
         print(cred.user!.uid);
 
@@ -46,34 +50,35 @@ class AuthMethods {
           recipeHistory: [],
         );
 
-        await _firestore.collection('users').doc(cred.user!.uid).set(user.toJson(),);
+        await _firestore.collection('users').doc(cred.user!.uid).set(
+              user.toJson(),
+            );
         res = "success";
       }
-    } catch(err) {
+    } catch (err) {
       res = err.toString();
     }
     return res;
   }
 
-  Future<String> logInUser({
-    required String email,
-    required String password
-  }) async {
+  Future<String> logInUser(
+      {required String email, required String password}) async {
     String res = "Some error occured";
 
-    
-    if(email.isNotEmpty && password.isNotEmpty) {
+    if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        await _auth.signInWithEmailAndPassword(email: email, password: password);
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        _notificationService.initNotifications();
         res = "success";
-      } catch(err) {
+      } catch (err) {
         res = "fail";
         print(res);
       }
     } else {
       res = "Please fill all fields";
     }
-    
+
     return res;
   }
 
