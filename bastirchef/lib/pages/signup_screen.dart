@@ -39,8 +39,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       favoriteRecipes: [],
       recipeLists: [],
       recipes: [],
+      shopping_list: {},
       storage: {},
-      recipeHistory: [],);
+      recipeHistory: [],
+      userImage: "https://firebasestorage.googleapis.com/v0/b/bastirchef-3aeef.appspot.com/o/posts%2Fdefaultphoto.jpg?alt=media&token=c24e0732-8886-44c6-9931-949e1fbf8c89");
     if (res == "success") {
       setState(() {
         _isLoading = false;

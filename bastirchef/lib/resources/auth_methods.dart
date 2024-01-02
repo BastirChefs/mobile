@@ -27,7 +27,9 @@ class AuthMethods {
     required List recipeLists,
     required List recipes,
     required Map storage,
+    required Map shopping_list,
     required List recipeHistory,
+    required String userImage,
   }) async {
     String res = "Some error occured";
     try {
@@ -48,6 +50,7 @@ class AuthMethods {
           storage: {},
           shopping_list: {},
           recipeHistory: [],
+          userImage: "https://firebasestorage.googleapis.com/v0/b/bastirchef-3aeef.appspot.com/o/posts%2Fdefaultphoto.jpg?alt=media&token=c24e0732-8886-44c6-9931-949e1fbf8c89"
         );
 
         await _firestore.collection('users').doc(cred.user!.uid).set(

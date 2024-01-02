@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors, prefer_interpolation_to_compose_strings
 
+import 'dart:typed_data';
 import 'package:bastirchef/pages/login_screen.dart';
 import 'package:bastirchef/pages/recipe_list.dart';
 import 'package:bastirchef/resources/auth_methods.dart';
@@ -8,6 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bastirchef/pages/create_recipe.dart';
 import 'package:bastirchef/pages/recipes_by_me.dart';
 import 'package:flutter/material.dart';
+import 'package:bastirchef/resources/storage_methods.dart';
+import 'package:image_picker/image_picker.dart';
 import 'src/button.dart';
 import 'storage_page.dart';
 
@@ -22,6 +25,8 @@ class _ProfileState extends State<Profile> {
   List<String> recipeListsNames = [];
   String newListName = "";
   TextEditingController newListNameController = TextEditingController();
+  Uint8List? _file;
+  String photoUrl = "";
 
   @override
   void initState() {
@@ -91,6 +96,81 @@ class _ProfileState extends State<Profile> {
       setState(() {
         recipeListsNames.add(newListName);
       });
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  pickImage(ImageSource source) async {
+    final ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: source);
+    if (file != null) {
+      return await file.readAsBytes();
+    }
+  }
+
+  _selectImage(BuildContext parentContext) async {
+    return showDialog(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Text('Select a Photo'),
+          children: <Widget>[
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text('Take a photo'),
+              onPressed: () async {
+                Navigator.pop(context);
+                Uint8List file = await pickImage(ImageSource.camera);
+                setState(() {
+                  _file = file;
+                });
+                updateProfilePic();
+              }
+            ),
+            SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Choose from Gallery'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  Uint8List file = await pickImage(ImageSource.gallery);
+                  setState(() {
+                    _file = file;
+                  });
+                  updateProfilePic();
+                }),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  updateProfilePic() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      if (_file != null) {
+        photoUrl = await StorageMethods().uploadImageToStorage('posts', _file!, false);
+        print('Image uploaded successfully. URL: $photoUrl');
+      } else {
+        print('Error: _file is null.');
+      }
+      print("trying to update pp");
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'userImage': photoUrl,});
     } catch (e) {
       print(e);
     }
@@ -184,7 +264,9 @@ class _ProfileState extends State<Profile> {
                                 height: 8.0,
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: ()  { 
+                                  _selectImage(context);
+                                },
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [

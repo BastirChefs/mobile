@@ -11,6 +11,7 @@ class User {
   final Map storage;
   final Map shopping_list;
   final List recipeHistory;
+  final String userImage;
 
 
   const User({
@@ -24,6 +25,7 @@ class User {
     required this.storage,
     required this.shopping_list,
     required this.recipeHistory,
+    required this.userImage,
   });
 
   static User fromSnap(DocumentSnapshot snap) {
@@ -40,6 +42,7 @@ class User {
       storage: snapshot["storage"],
       shopping_list: snapshot["shopping_list"],
       recipeHistory: snapshot["recipeHistory"],
+      userImage: snapshot["userImage"],
     );
   }
 
@@ -54,5 +57,6 @@ class User {
     "storage": storage,
     "shopping_list": shopping_list,
     "recipeHistory": recipeHistory,
+    "userImage": userImage,
   };
 }
