@@ -150,16 +150,15 @@ class _CreateRecipeState extends State<CreateRecipe> {
           title: const Text('Select a Photo'),
           children: <Widget>[
             SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Text('Take a photo'),
-              onPressed: () async {
-                Navigator.pop(context);
-                Uint8List file = await pickImage(ImageSource.camera);
-                setState(() {
-                  _file = file;
-                });
-              }
-            ),
+                padding: const EdgeInsets.all(20),
+                child: const Text('Take a photo'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Uint8List file = await pickImage(ImageSource.camera);
+                  setState(() {
+                    _file = file;
+                  });
+                }),
             SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
                 child: const Text('Choose from Gallery'),
@@ -187,16 +186,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   TextEditingController _descriptionTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return _file == null
-        ? Center(
-            child: IconButton(
-              icon: const Icon(
-                Icons.upload,
-              ),
-              onPressed: () => _selectImage(context),
-            ),
-          )
-        :Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF282828),
         leading: GestureDetector(
@@ -221,91 +211,111 @@ class _CreateRecipeState extends State<CreateRecipe> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                controller: _titleTextController,
-                decoration: InputDecoration(
-                  labelText: "Title",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Ingredients",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            if (_file != null) 
+              Container(
+                          height: 200, // Height for the recipe photo
+                          width: double.infinity, // Full width of the container
+                          decoration: BoxDecoration(
+                            image: _file != null
+                                ? DecorationImage(
+                                    fit: BoxFit.cover,
+                                    alignment: FractionalOffset.topCenter,
+                                    image: MemoryImage(_file!),
+                                  )
+                                : null, // Return null if _file is null
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(30.0),
+                              bottomRight: Radius.circular(30.0),
+                            ),
+                          ),
+              ),      
+            Padding(
+              padding: EdgeInsets.only( top: 16, bottom: 16, left: 16, right: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [      
+                  // // Add photo button
+                  // Center(
+                  //   child: IconButton(
+                  //     icon: Icon(Icons.photo_camera),
+                  //     onPressed: () => _selectImage(context),
+                  //   ),
+                  // ),
+            
+                  TextField(
+                    controller: _titleTextController,
+                    decoration: InputDecoration(
+                      labelText: "Title",
+                      border: OutlineInputBorder(),
+                    ),
                   ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Ingredients",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      CustomButton(
+                        text: 'Add Ingredient',
+                        onPressed: () {
+                          setState(() {
+                            // ingredients.add('New Ingredient');
+                            _addIngredient();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: selectedIds
+                          .map((ingredient) => Text(ingredient))
+                          .toList(),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _descriptionTextController,
+                    decoration: InputDecoration(
+                      labelText: "Description",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                  ),
+                  SizedBox(height: 20),
                   CustomButton(
-                    text: 'Add Ingredient',
+                    text: 'Share',
                     onPressed: () {
-                      setState(() {
-                        // ingredients.add('New Ingredient');
-                        _addIngredient();
-                      });
+                      print('Share');
+                      shareRecipe();
                     },
                   ),
                 ],
               ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: selectedIds
-                      .map((ingredient) => Text(ingredient))
-                      .toList(),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: _descriptionTextController,
-                decoration: InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                height: 45.0,
-                width: 45.0,
-                child: AspectRatio(
-                  aspectRatio: 487 / 451,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: _file != null
-                          ? DecorationImage(
-                              fit: BoxFit.fill,
-                              alignment: FractionalOffset.topCenter,
-                              image: MemoryImage(_file!),
-                            )
-                          : null, // Return null if _file is null
-                    ),
-                  ),
-                ),
-              ),
-              CustomButton(
-                text: 'Share',
-                onPressed: () {
-                  print('Share');
-                  shareRecipe();
-                },
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+        
       ),
+
+            floatingActionButton: FloatingActionButton(
+        onPressed: () => _selectImage(context),
+        backgroundColor: Color(0xFFD75912),
+        child: Icon(Icons.photo_camera), // Sets the background color to orange
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Positions the button at the bottom right
     );
   }
 }
