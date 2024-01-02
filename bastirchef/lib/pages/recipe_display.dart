@@ -311,54 +311,31 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              IconButton(
-                                icon: Icon(Icons.add,
-                                    color: Colors
-                                        .white), // Add to recipe list icon
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      String selectedListName = userData[
-                                              'recipe_list']
-                                          .keys
-                                          .first; // Default to the first list
-                                      return StatefulBuilder(
-                                        builder: (BuildContext context,
-                                            StateSetter setState) {
-                                          return Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.all(16.0),
-                                                child: Text(
-                                                    "Which recipe list would you like to add this recipe to?"),
-                                              ),
-                                              for (String listName
-                                                  in userData['recipe_list']
-                                                      .keys)
-                                                ListTile(
-                                                  title: Text(listName),
-                                                  leading: Radio(
-                                                    value: listName,
-                                                    groupValue:
-                                                        selectedListName,
-                                                    onChanged: (String? value) {
-                                                      if (value != null) {
-                                                        setState(() =>
-                                                            selectedListName =
-                                                                value);
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ElevatedButton(
-                                                child: Text("Add"),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.flag), // Using a flag icon as an example for report
+                                    color: Colors.white, // Color can be adjusted based on your design
+                                    onPressed: () {
+                                      // Show confirmation dialog
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Report Recipe'),
+                                            content: Text('Are you sure you want to report this recipe?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: Text('No'),
                                                 onPressed: () {
-                                                  Navigator.pop(
-                                                      context); // Close the bottom sheet
-                                                  addToList(
-                                                      selectedListName); // Call the function with selected list name
+                                                  Navigator.of(context).pop(); // Close the dialog
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text('Yes'),
+                                                onPressed: () {
+                                                  // TODO: Buraya report functionality çağırılacak
+                                                  Navigator.of(context).pop(); // Close the dialog after confirming
                                                 },
                                               ),
                                             ],
@@ -366,8 +343,67 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                         },
                                       );
                                     },
-                                  );
-                                },
+                                  ),
+
+                                  IconButton(
+                                    icon: Icon(Icons.add,
+                                        color: Colors
+                                            .white), // Add to recipe list icon
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          String selectedListName = userData[
+                                                  'recipe_list']
+                                              .keys
+                                              .first; // Default to the first list
+                                          return StatefulBuilder(
+                                            builder: (BuildContext context,
+                                                StateSetter setState) {
+                                              return Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.all(16.0),
+                                                    child: Text(
+                                                        "Which recipe list would you like to add this recipe to?"),
+                                                  ),
+                                                  for (String listName
+                                                      in userData['recipe_list']
+                                                          .keys)
+                                                    ListTile(
+                                                      title: Text(listName),
+                                                      leading: Radio(
+                                                        value: listName,
+                                                        groupValue:
+                                                            selectedListName,
+                                                        onChanged: (String? value) {
+                                                          if (value != null) {
+                                                            setState(() =>
+                                                                selectedListName =
+                                                                    value);
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ElevatedButton(
+                                                    child: Text("Add"),
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          context); // Close the bottom sheet
+                                                      addToList(
+                                                          selectedListName); // Call the function with selected list name
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                               Row(
                                 children: [
