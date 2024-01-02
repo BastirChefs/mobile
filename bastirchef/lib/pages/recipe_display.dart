@@ -257,8 +257,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                           width: double.infinity, // Full width of the container
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage(
-                                  "lib/pages/src/images/pizza.jpg"), // Path to your image asset
+                              image: NetworkImage(recipeData['image']), // Path to your image asset
                               fit: BoxFit
                                   .cover, // This will cover the entire space of the container
                             ),

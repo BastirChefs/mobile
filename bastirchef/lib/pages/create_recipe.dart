@@ -90,7 +90,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
         'recipeName': _titleTextController.text.toString(),
         'recipeText': _descriptionTextController.text.toString(),
         'comments': [],
-        'reactions': {'delicious': 0, 'looksGood': 0, 'oghk': 0},
+        'reactions': {'delicios': 0, 'looksGood': 0, 'oghk': 0},
         'timeCreated': DateTime.now(),
         'ingredients': ings,
         'mainIngredients': selectedIds,
