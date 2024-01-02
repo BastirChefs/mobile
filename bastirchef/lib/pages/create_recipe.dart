@@ -93,7 +93,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
         'reactions': {'delicios': 0, 'looksGood': 0, 'oghk': 0},
         'timeCreated': DateTime.now(),
         'ingredients': ings,
-        'mainIngredients': selectedIds,
+        'mainIngredients': mainIngredients,
         'userId': FirebaseAuth.instance.currentUser!.uid,
         'image': photoUrl,
       };
@@ -181,6 +181,46 @@ class _CreateRecipeState extends State<CreateRecipe> {
       },
     );
   }
+  List<dynamic> mainIngredients = [];
+  Column buildIngredientsList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: selectedIds.map((ingredient) {
+        return ListTile(
+          title: Text(ingredient),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min, // To keep the row size to a minimum
+            children: [
+              Checkbox(
+                value: mainIngredients.contains(ingredient),
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (value == true) {
+                      mainIngredients.add(ingredient);
+                    } else {
+                      mainIngredients.remove(ingredient);
+                    }
+                  });
+                },
+                activeColor: Colors.orange,
+              ),
+              IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  setState(() {
+                    selectedIds.remove(ingredient);
+                    mainIngredients.remove(ingredient); // Also remove from mainIngredients if it's there
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+
 
   TextEditingController _titleTextController = TextEditingController();
   TextEditingController _descriptionTextController = TextEditingController();
@@ -277,12 +317,13 @@ class _CreateRecipeState extends State<CreateRecipe> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: selectedIds
-                          .map((ingredient) => Text(ingredient))
-                          .toList(),
-                    ),
+                    child: buildIngredientsList(),
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: selectedIds
+                    //       .map((ingredient) => Text(ingredient))
+                    //       .toList(),
+                    // ),
                   ),
                   SizedBox(height: 20),
                   TextField(
