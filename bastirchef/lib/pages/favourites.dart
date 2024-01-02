@@ -50,6 +50,25 @@ class _FavouritesState extends State<Favourites> {
       isLoading = false;
     });
   }
+
+  removeRecipe(id) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      List<dynamic> favs = userData['favorite_recipes'];
+      favs.remove(id);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'favorite_recipes': favs});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -78,8 +97,18 @@ class _FavouritesState extends State<Favourites> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
                     SizedBox(height: 30),
-                    for(var id in favourites) FoodBox(id: id),
-
+                    for(var id in favourites) Column(
+                      children: [
+                        FoodBox(id: id),
+                        GestureDetector(
+                              onTap: () {
+                                removeRecipe(id);
+                                //update();
+                              },
+                              child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
+                            ),
+                        ],
+                      ) 
                   ]))
           )
       ),
