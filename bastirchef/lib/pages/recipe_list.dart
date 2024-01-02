@@ -2,17 +2,71 @@
 
 import 'package:flutter/material.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RecipeList extends StatefulWidget {
-  final List recipes;
   final String recipeListName; // Add this line to accept the recipe list name
-  const RecipeList({Key? key, required this.recipes, required this.recipeListName}) : super(key:key); // Modify the constructor
+  const RecipeList({Key? key, required this.recipeListName}) : super(key:key); // Modify the constructor
 
   @override
   State<RecipeList> createState() => _RecipeListState();
 }
 
 class _RecipeListState extends State<RecipeList> {
+  var userData = {};
+  bool isLoading = false;
+  List recipes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      userData = userSnap.data()!;
+      print(userData);
+      recipes = userData['recipe_list'][widget.recipeListName];
+      
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+  
+  removeRecipe(id) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      String listName = widget.recipeListName;
+      List<dynamic> recipesInList = userData['recipe_list'][widget.recipeListName];
+      recipesInList.remove(id);
+      print(recipesInList);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'recipe_list.$listName': recipesInList});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,7 +110,18 @@ class _RecipeListState extends State<RecipeList> {
                         ),
                       ),
                       SizedBox(height: 20), // Optional: to provide some spacing after the title
-                      for(var item in widget.recipes) FoodBox(id: item),
+                      for(var item in recipes) Column(
+                      children: [
+                        FoodBox(id: item),
+                        GestureDetector(
+                              onTap: () {
+                                removeRecipe(item);
+                                //update();
+                              },
+                              child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
+                            ),
+                        ],
+                      ) 
                       // FoodBox(),
                     ],
                   ),

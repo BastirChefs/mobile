@@ -428,7 +428,6 @@ class _ProfileState extends State<Profile> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => RecipeList(
-                                          recipes: userData['recipe_list'][recipeListsNames[index]],
                                           recipeListName: recipeListsNames[index], // Pass the recipe list name here
                                         ),
                                         ),
