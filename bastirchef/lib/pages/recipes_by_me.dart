@@ -15,6 +15,7 @@ class _RecipesByMeState extends State<RecipesByMe> {
   var userData = {};
   bool isLoading = false;
   List userRecipes = [];
+  List<String> documentIds = [];
 
   @override
   void initState() {
@@ -27,15 +28,25 @@ class _RecipesByMeState extends State<RecipesByMe> {
       isLoading = true;
     });
     try {
-      var userSnap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
+      final recipeSnapshot = await FirebaseFirestore.instance
+        .collection('recipes')
+        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get();
+      recipeSnapshot.docs.forEach((doc) {
+        documentIds.add(doc.id);
+      });
 
-      userData = userSnap.data()!;
-      print(userData);
+      print('Document IDs: $documentIds');
 
-      userRecipes = userData['recipes'];
+      // var userSnap = await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(FirebaseAuth.instance.currentUser!.uid)
+      //     .get();
+
+      // userData = userSnap.data()!;
+      // print(userData);
+
+      // userRecipes = userData['recipes'];
       
     } catch (e) {
       print(e);
@@ -113,12 +124,11 @@ class _RecipesByMeState extends State<RecipesByMe> {
                   children : [
                     Text("hello"),
                     Text("recipes by me will be here"),
-                    for(var id in userRecipes) Column(
+                    for(var id in documentIds) Column(
                       children: [
                         FoodBox(id: id),
                         GestureDetector(
                           onTap: () {
-                            userRecipes.removeAt(userRecipes.indexOf(id));
                             deleteRecipe(id);
                             update();
                           },
