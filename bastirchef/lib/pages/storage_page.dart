@@ -5,6 +5,7 @@ import 'package:bastirchef/pages/src/food_box.dart';
 import 'package:bastirchef/resources/auth_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'src/item_box.dart';
 
 class Storage extends StatefulWidget {
   @override
@@ -94,32 +95,46 @@ class _StorageState extends State<Storage> {
             ),
           ),
           body: SingleChildScrollView(
-              child: Center(child: Column(
+              child: Center(child: Container(
+                  margin: EdgeInsets.only(top: 50, right: 20, left: 20),
+                  padding: EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFD9D9D9),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
-                    Text("hello"),
-                    Text("storage will be here"),
-                    for(var item in userStorage.entries) Row(
-                      children: <Widget>[
-                        Text("Ingredient: " + item.key + "\nAmount: " + item.value.toString() + "\n"),
-                        GestureDetector(
-                          onTap: () {
-                            userStorage.update(item.key, (existingValue) => existingValue + 1);
-                            updateStorage();
-                          },
-                          child: Text("Add\t", style: TextStyle(color: Colors.green, fontSize: 12.0),)
+                    for(var item in userStorage.entries)
+                      Container(
+                        margin: EdgeInsets.all(8.0), // Example margin for spacing
+                        padding: EdgeInsets.all(8.0), // Example padding for inner content
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black12), // Example border
+                          borderRadius: BorderRadius.circular(10.0), // Example border radius
+                          color: Color(0xFFD9D9D9),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            userStorage.remove(item.key);
-                            updateStorage();
-                          },
-                          child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
-                        )
-                      ],
-                    )
-
-                  ]))
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ItemBox(ingredientName: item.key, amount: item.value),
+                            ),
+                            SizedBox(width: 10),
+                            GestureDetector(
+                              onTap: () {
+                                userStorage.remove(item.key);
+                                updateStorage();
+                              },
+                              child: Icon(
+                                Icons.delete_outline_outlined, // Replace this with the desired icon
+                                color: Colors.red, // Set the color of the icon
+                                size: 24, // Set the size of the icon
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ])))
           )
       ),
     );

@@ -130,6 +130,7 @@ class _ShoppingListState extends State<ShoppingList> {
             child: Center(
               child: Container(
                 margin: EdgeInsets.only(top: 50, right: 20, left: 20),
+                padding: EdgeInsets.symmetric(vertical: 25, horizontal: 10),
                 decoration: BoxDecoration(
                   color: Color(0xFFD9D9D9),
                   borderRadius: BorderRadius.circular(15),
