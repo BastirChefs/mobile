@@ -102,6 +102,25 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     });
   }
 
+    removeFromFav(id) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      List<dynamic> favs = userData['favorite_recipes'];
+      favs.remove(id);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'favorite_recipes': favs});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   addComment(comment) async {
     setState(() {
       isLoading = true;
@@ -427,13 +446,18 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.star,
-                                        color: Colors
-                                            .white), // Star (Favorite) icon
+                                    icon: (userData['favorite_recipes'] != null && userData['favorite_recipes'].contains(widget.id))
+                                        ? Icon(Icons.star, color: Colors.white) // Filled star if in favorites
+                                        : Icon(Icons.star_border, color: Colors.white), // Outlined star if not in favorites
                                     onPressed: () {
-                                      addToFav(); // Call addToFav function on press
+                                      if (userData['favorite_recipes'] != null && userData['favorite_recipes'].contains(widget.id)) {
+                                        removeFromFav(widget.id); // Remove from favorites if it's already in there
+                                      } else {
+                                        addToFav(); // Add to favorites if it's not there
+                                      }
                                     },
                                   ),
+
                                   IconButton(
                                     icon: Icon(Icons.comment,
                                         color: Colors.white), // Comment icon
