@@ -59,6 +59,24 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     });
   }
 
+  reportRecipe() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await FirebaseFirestore.instance
+          .collection('recipes')
+          .doc(widget.id)
+          .update({'isReported': true});
+
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   addToFav() async {
     setState(() {
       isLoading = true;
@@ -335,6 +353,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                 child: Text('Yes'),
                                                 onPressed: () {
                                                   // TODO: Buraya report functionality çağırılacak
+                                                  reportRecipe();
                                                   Navigator.of(context).pop(); // Close the dialog after confirming
                                                 },
                                               ),
