@@ -122,8 +122,6 @@ class _RecipesByMeState extends State<RecipesByMe> {
               child: Center(child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
-                    Text("hello"),
-                    Text("recipes by me will be here"),
                     for(var id in documentIds) Column(
                       children: [
                         FoodBox(id: id),

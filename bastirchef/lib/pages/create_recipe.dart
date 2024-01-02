@@ -1,10 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'dart:typed_data';
 
 import 'package:bastirchef/pages/src/drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:bastirchef/pages/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -100,6 +101,11 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
       await FirebaseFirestore.instance.collection('recipes').add(recipe);
       print('Recipe added successfully.');
+          // Navigate to Profile page after successful share
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Profile()),
+      );
     } catch (e, stackTrace) {
       print('Error sharing recipe: $e\n$stackTrace');
       // Handle the error or throw an exception
