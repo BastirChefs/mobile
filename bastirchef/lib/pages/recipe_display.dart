@@ -326,8 +326,8 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                       alignment: Alignment.bottomCenter,
                       children: [
                         Container(
-                          height: 200, // Height for the recipe photo
-                          width: double.infinity, // Full width of the container
+                          height: MediaQuery.of(context).size.height * 0.32,
+                          width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: NetworkImage(recipeData['image']), // Path to your image asset
