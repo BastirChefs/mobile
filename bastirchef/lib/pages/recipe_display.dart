@@ -120,14 +120,14 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     for (var keys in keyList) {
       var ingredient = recipeData['ingredients'][keys];
       if (userData['storage'][keys] == null) {
-        var key = ingredient;
+        //var key = ingredient;
         var value = ingredient['amount'];
-        Map item = {key: value};
+        Map item = {keys: value};
         missingItems.add(item);
       } else if (userData['storage'][keys] < ingredient['amount']) {
-        var key = ingredient;
+        //var key = ingredient;
         var value = ingredient['amount'] - userData['storage'][keys];
-        Map item = {key: value};
+        Map item = {keys: value};
         missingItems.add(item);
       }
     }
@@ -136,6 +136,36 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     });
     print(missingItems);
     return missingItems;
+  }
+
+  addToShopList(list) async {
+    setState(() {
+      isLoading = true;
+    });
+    Map<String, dynamic> missingItems = userData['shopping_list'];
+    for (var item in list) {
+      for(var key in item.keys){
+        if (userData['shopping_list'][key] == null) {
+          //Map item = {keys.key: keys.value};
+          missingItems[key] = item[key];
+        } else{
+          var value = userData['shopping_list'][key];
+          value += item[key];
+          //Map item = {keys.key: value};
+          missingItems[key] = value;
+          //missingItems.add(item);
+        }
+      }
+    }
+    print(missingItems);
+    await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'shopping_list': missingItems});
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   addToList(listName) async {
@@ -215,6 +245,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                         child: Text("Add to Shopping List"),
                         onPressed: () {
                           // Add functionality to add items to shopping list
+                          addToShopList(missingItems);
                           Navigator.of(context).pop(); // Close the dialog
                         },
                       ),
