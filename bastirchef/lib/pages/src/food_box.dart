@@ -128,7 +128,7 @@ class _FoodBoxState extends State<FoodBox> {
 
                     SizedBox(height: 10),
                     Row(children:[
-                      Icon(Icons.favorite_border_outlined,
+                      Icon(Icons.star_border_outlined,
                       color:Color(0xFFE3E3E3) ),
                       SizedBox(width: 5),
                       Text(recipeData['reactions']['delicios'].toString(),
