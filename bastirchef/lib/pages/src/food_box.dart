@@ -97,10 +97,10 @@ class _FoodBoxState extends State<FoodBox> {
                   ),
                   // Replace this with your image widget
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15), // Same radius as the container decoration
-                    child: Image.asset(
-                      "lib/pages/src/images/pizza.jpg",
-                      fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      recipeData['image'],
+                      fit: BoxFit.cover, // Adjust the fit based on your requirement
                     ),
                   ),
                 ),
