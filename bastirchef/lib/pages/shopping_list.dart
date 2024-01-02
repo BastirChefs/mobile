@@ -52,6 +52,24 @@ class _ShoppingListState extends State<ShoppingList> {
     });
   }
 
+  deleteList() async {
+    setState(() {
+      isLoading = true;
+    });
+    items = {};
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'shopping_list': items});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   updateList () async {
     setState(() {
       isLoading = true;
@@ -193,7 +211,7 @@ class _ShoppingListState extends State<ShoppingList> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        updateList();
+                        deleteList();
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end, // Aligns content to the end (right)
