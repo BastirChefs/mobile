@@ -94,7 +94,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
         'comment': comment,
         'createdAt': DateTime.now(),
         'userId': username,
-        'userImage': '',
+        'userImage': userData['userImage'],
       };
       print(commentMap);
       allComments.add(commentMap);
