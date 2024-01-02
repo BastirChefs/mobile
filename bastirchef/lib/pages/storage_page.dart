@@ -46,6 +46,32 @@ class _StorageState extends State<Storage> {
     });
   }
 
+  addToStorage(name, amount) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      print(userData);
+      userStorage = userData['storage'];
+
+      if(userStorage[name] != null){
+        userStorage[name] = userStorage[name] + amount;
+      }else{
+        userStorage[name] = amount;
+      }
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'storage': userStorage});
+    } catch (e) {
+      print(e);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   updateStorage() async {
     setState(() {
       isLoading = true;
