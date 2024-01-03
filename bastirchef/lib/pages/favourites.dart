@@ -18,6 +18,7 @@ class _FavouritesState extends State<Favourites> {
   var userData = {};
   bool isLoading = false;
   List<dynamic> favourites = [];
+  List<dynamic> existing_favs = [];
 
   @override
   void initState() {
@@ -30,6 +31,8 @@ class _FavouritesState extends State<Favourites> {
       isLoading = true;
     });
     try {
+      favourites = [];
+      existing_favs = [];
       var userSnap = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -41,7 +44,20 @@ class _FavouritesState extends State<Favourites> {
       if (userData.containsKey('favorite_recipes')) {
         favourites = userData['favorite_recipes'];
         print(favourites);
-      }
+
+        for (var id in favourites) {
+          var docSnapshot = await FirebaseFirestore.instance
+              .collection('recipes')
+              .doc(id)
+              .get();
+
+          if (docSnapshot.exists) {
+            existing_favs.add(id);
+          }
+        }
+
+        print(existing_favs);
+    }
       setState(() {});
     } catch (e) {
       print(e);
@@ -56,8 +72,8 @@ class _FavouritesState extends State<Favourites> {
       isLoading = true;
     });
     try {
-      favourites = userData['favorite_recipes'];
-      favourites.remove(id);
+      //favourites = userData['favorite_recipes'];
+      existing_favs.remove(id);
       var recipeSnap = await FirebaseFirestore.instance
           .collection('recipes')
           .doc(id)
@@ -71,7 +87,7 @@ class _FavouritesState extends State<Favourites> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'favorite_recipes': favourites});
+          .update({'favorite_recipes': existing_favs});
     } catch (e) {
       print(e);
     }
@@ -107,9 +123,20 @@ class _FavouritesState extends State<Favourites> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children : [
                     SizedBox(height: 30),
-                    for(var id in favourites) Column(
+                    for(var id in existing_favs) Column(
                       children: [
                         FoodBox(id: id),
+                        GestureDetector(
+                            onTap: () {
+                              removeRecipe(id);
+                              setState(() {});
+                            },
+                          child: Icon(
+                            Icons.delete_outline_outlined, // Replace this with the desired icon
+                            color: Colors.red, // Set the color of the icon
+                            size: 30, // Set the size of the icon
+                          ),),
+                        SizedBox(height: 20),
 
                         ],
                       ) 
