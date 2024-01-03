@@ -421,9 +421,8 @@ class _EditRecipeState extends State<EditRecipe> {
                   ),
                   SizedBox(height: 20),
                   CustomButton(
-                    text: 'Share',
+                    text: 'Edit',
                     onPressed: () {
-                      print('Edit');
                       editRecipe();
                     },
                   ),
