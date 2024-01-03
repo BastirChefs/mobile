@@ -24,8 +24,9 @@ class _EditRecipeState extends State<EditRecipe> {
   var userData = {};
   List<Map<String, dynamic>> allIngredients = [];
   bool isLoading = false;
-  List<dynamic> selectedIds = [];
+  List<String> selectedIds = [];
   Uint8List? _file;
+  String photoUrl = "";
 
   @override
   void initState() {
@@ -47,6 +48,8 @@ class _EditRecipeState extends State<EditRecipe> {
         recipeData = recipeSnap.data()!;
         _titleTextController.text = recipeData['recipeName'];
         _descriptionTextController.text = recipeData['recipeText'];
+        photoUrl = recipeData['image'];
+        recipeData['ingredients'].keys.forEach((key) => selectedIds.add(key));
         // Handle photo loading if needed
       }
       var userSnap = await FirebaseFirestore.instance
@@ -82,13 +85,14 @@ class _EditRecipeState extends State<EditRecipe> {
     setState(() {
       isLoading = true;
     });
-    String photoUrl = "";
     try {
+      String updatedPhotoUrl = "";
       if (_file != null) {
-        photoUrl = await StorageMethods().uploadImageToStorage('posts', _file!, false);
+        updatedPhotoUrl = await StorageMethods().uploadImageToStorage('posts', _file!, false);
         print('Image uploaded successfully. URL: $photoUrl');
       } else {
         print('Error: _file is null.');
+        updatedPhotoUrl = photoUrl;
       }
 
       print("im here");
@@ -103,16 +107,16 @@ class _EditRecipeState extends State<EditRecipe> {
       var recipe = {
         'recipeName': _titleTextController.text.toString(),
         'recipeText': _descriptionTextController.text.toString(),
-        'comments': [],
-        'reactions': {'delicios': 0, 'looksGood': 0, 'oghk': 0},
+        'comments': recipeData['comments'],
+        'reactions': recipeData['reactions'],
         'timeCreated': DateTime.now(),
         'ingredients': ings,
         'mainIngredients': mainIngredients,
         'userId': FirebaseAuth.instance.currentUser!.uid,
-        'image': photoUrl,
+        'image': updatedPhotoUrl,
       };
 
-      await FirebaseFirestore.instance.collection('recipes').add(recipe);
+      await FirebaseFirestore.instance.collection('recipes').doc(widget.id).update(recipe);
       print('Recipe added successfully.');
           // Navigate to Profile page after successful share
       Navigator.push(
@@ -135,13 +139,17 @@ class _EditRecipeState extends State<EditRecipe> {
       DropDown(
         buttonText: "Add",
         options: getOptions(),
-        selectedOptions: [],
-        selectedItems: (List<dynamic> selectedList) {
+        selectedOptions: selectedIds, // Now correctly typed as List<String>
+        selectedItems: (List<dynamic> newSelectedList) {
           setState(() {
-            selectedIds = selectedList;
-            print(selectedIds);
+            // Append new selections to existing list without duplicates
+            for (var ingredient in newSelectedList) {
+              String ingredientString = ingredient as String; // Cast dynamic to String
+              if (!selectedIds.contains(ingredientString)) {
+                selectedIds.add(ingredientString);
+              }
+            }
           });
-          // Logic to add selected ingredients to the ingredients list
         },
         enableMultipleSelection: true,
       ),
@@ -241,6 +249,21 @@ class _EditRecipeState extends State<EditRecipe> {
   TextEditingController _descriptionTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<DocumentSnapshot>(
+      future: FirebaseFirestore.instance.collection('recipes').doc(widget.id).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Return a loading indicator or placeholder while data is being fetched.
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // Handle error case
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data == null) {
+          // Handle the case where no data is available
+          return Text('No data available');
+        } else {
+          // Data is available, update recipeData
+          recipeData = snapshot.data!.data() as Map<String, dynamic>;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF282828),
@@ -268,6 +291,14 @@ class _EditRecipeState extends State<EditRecipe> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            if(_file == null) Container(
+              height: 200, 
+              width: double.infinity,
+              child: Image.network(
+                      recipeData['image'],
+                      fit: BoxFit.cover, // Adjust the fit based on your requirement
+                    ),
+            ) ,
             if (_file != null) 
               Container(
                           height: 200, // Height for the recipe photo
@@ -373,5 +404,8 @@ class _EditRecipeState extends State<EditRecipe> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Positions the button at the bottom right
     );
+  }
+  }
+  );
   }
 }
