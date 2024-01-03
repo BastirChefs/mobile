@@ -30,6 +30,8 @@ class _ProfileState extends State<Profile> {
   String ingredientName = '';
   final List<String> units = ['gr', 'cl', 'kg', 'ml', 'pcs']; // Example units
   TextEditingController ingredientNameController = TextEditingController();
+  List<Map<String, dynamic>> allIngredients = [];
+  //suggest end
   Uint8List? _file;
   String photoUrl = "";
 
@@ -43,6 +45,51 @@ class _ProfileState extends State<Profile> {
   void dispose() {
     newListNameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _getIngredients() async {
+    try {
+      // Fetch ingredients
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('ingredients').get();
+      setState(() {
+        allIngredients = querySnapshot.docs
+            .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  sendSuggestion() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      var ingredient = {
+        'name': ingredientNameController.text.toString(),
+        'unit': selectedUnit,
+        'isVerified': false,
+      };
+
+      await FirebaseFirestore.instance
+          .collection('ingredients')
+          .add(ingredient);
+      print('Ingredient suggested successfully.');
+      // Navigate to Profile page after successful share
+    } catch (e, stackTrace) {
+      print('Error sending suggestion: $e\n$stackTrace');
+      // Handle the error or throw an exception
+      // throw e;
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   getData() async {
@@ -409,10 +456,14 @@ class _ProfileState extends State<Profile> {
                                                 TextButton(
                                                   child: Text('Submit'),
                                                   onPressed: () {
+                                                    _getIngredients();
                                                     if (selectedUnit != null &&
-                                                        ingredientNameController.text.isNotEmpty) {
-                                                      print('Ingredient: ${ingredientNameController.text}, Unit: $selectedUnit');
+                                                        ingredientNameController
+                                                            .text.isNotEmpty) {
+                                                      print(
+                                                          'Ingredient: ${ingredientNameController.text}, Unit: $selectedUnit');
                                                     }
+                                                    sendSuggestion();
                                                     Navigator.of(context).pop();
                                                   },
                                                 ),
