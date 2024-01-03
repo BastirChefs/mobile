@@ -28,6 +28,9 @@ class _EditRecipeState extends State<EditRecipe> {
   Uint8List? _file;
   String photoUrl = "";
 
+  //amount
+  Map<String, TextEditingController> amountControllers = {};
+
   @override
   void initState() {
     super.initState();
@@ -65,6 +68,11 @@ class _EditRecipeState extends State<EditRecipe> {
       allIngredients = querySnapshot.docs
           .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
           .toList();
+
+      // Initialize amountControllers with ingredient amounts
+      recipeData['ingredients'].forEach((key, value) {
+        amountControllers[key] = TextEditingController(text: value['amount'].toString());
+      });
       
     } catch (e) {
       print(e);
@@ -82,7 +90,7 @@ class _EditRecipeState extends State<EditRecipe> {
     return options;
   }
 
-  shareRecipe() async {
+  editRecipe() async {
     setState(() {
       isLoading = true;
     });
@@ -98,12 +106,15 @@ class _EditRecipeState extends State<EditRecipe> {
 
       print("im here");
 
-      Map<String, dynamic> map = {'unit': 'gr', 'amount': 1};
-      Map<String, Map<String, dynamic>> ings = Map.fromIterable(
-        selectedIds,
-        key: (k) => k,
-        value: (v) => map,
-      );
+      Map<String, Map<String, dynamic>> ings = {};
+      for (var ingredient in selectedIds) {
+        String amount = amountControllers[ingredient]?.text ?? '0';
+        String unit = allIngredients.firstWhere(
+            (element) => element['name'] == ingredient,
+            orElse: () => {'unit': ''})['unit'];
+
+        ings[ingredient] = {'unit': unit, 'amount': amount};
+      }
 
       var recipe = {
         'recipeName': _titleTextController.text.toString(),
@@ -206,12 +217,37 @@ class _EditRecipeState extends State<EditRecipe> {
     );
   }
   List<dynamic> mainIngredients = [];
+
   Column buildIngredientsList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: selectedIds.map((ingredient) {
+        // Create a new TextEditingController if it does not exist for this ingredient
+        amountControllers.putIfAbsent(ingredient, () => TextEditingController());
+
+        String unit = allIngredients.firstWhere(
+            (element) => element['name'] == ingredient,
+            orElse: () => {'unit': 'unknown'})['unit'];
+
         return ListTile(
-          title: Text(ingredient),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(ingredient),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: amountControllers[ingredient],
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
+                    suffixText: unit,
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+            ],
+          ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min, // To keep the row size to a minimum
             children: [
@@ -234,6 +270,7 @@ class _EditRecipeState extends State<EditRecipe> {
                   setState(() {
                     selectedIds.remove(ingredient);
                     mainIngredients.remove(ingredient); // Also remove from mainIngredients if it's there
+                    amountControllers.remove(ingredient); // Remove its controller
                   });
                 },
               ),
@@ -281,7 +318,7 @@ class _EditRecipeState extends State<EditRecipe> {
           ),
         ),
         title: Text(
-          "Create Recipe",
+          "Edit Recipe",
           style: TextStyle(
             color: Color(0xFFE3E3E3),
             fontWeight: FontWeight.bold,
@@ -386,8 +423,8 @@ class _EditRecipeState extends State<EditRecipe> {
                   CustomButton(
                     text: 'Share',
                     onPressed: () {
-                      print('Share');
-                      shareRecipe();
+                      print('Edit');
+                      editRecipe();
                     },
                   ),
                 ],
