@@ -113,7 +113,7 @@ class _EditRecipeState extends State<EditRecipe> {
             (element) => element['name'] == ingredient,
             orElse: () => {'unit': ''})['unit'];
 
-        ings[ingredient] = {'unit': unit, 'amount': amount};
+        ings[ingredient] = {'unit': unit, 'amount': int.parse(amount)};
       }
 
       var recipe = {
