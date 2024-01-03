@@ -24,6 +24,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   bool isLoading = false;
   List<String> selectedIds = [];
   Uint8List? _file;
+  String photoUrl = "";
   Map<String, TextEditingController> amountControllers = {};
   @override
   void initState() {
@@ -68,14 +69,15 @@ class _CreateRecipeState extends State<CreateRecipe> {
     setState(() {
       isLoading = true;
     });
-    String photoUrl = "";
     try {
+      print(_file);
       if (_file != null) {
         photoUrl =
             await StorageMethods().uploadImageToStorage('posts', _file!, false);
         print('Image uploaded successfully. URL: $photoUrl');
       } else {
         print('Error: _file is null.');
+        return;
       }
 
       print("im here");
