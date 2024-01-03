@@ -69,25 +69,6 @@ class _HomepageState extends State<Homepage> {
     return options;
   }
 
-  // Future<void> getRecipeSuggestions() async {
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   try {
-  //     final service = SuggestionService();
-  //     const userId = "RietHUeDDXWyYFmhJTzCGP4B7gQ2";
-  //     final recipeIds = await service.makeSuggestion(userId);
-  //     setState(() {
-  //       suggestedRecipeIds = recipeIds;
-  //     });
-  //   } catch (e) {
-  //     print('Error fetching recipe suggestions: $e');
-  //   }
-  //   setState(() {
-  //     isLoading = false;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -150,19 +131,6 @@ class _HomepageState extends State<Homepage> {
                       textEditingController: TextEditingController(),
                       hint: 'Select Ingredients',
                       options: getOptions(),
-                      // {
-                      //   1: "Tomato",
-                      //   2: "Patato",
-                      //   3: "Chicken",
-                      //   4: "Pasta",
-                      //   5: "Pesto Sauce",
-                      //   6: "Arrabiata Sauce",
-                      //   7: "Filler",
-                      //   8: "Filler",
-                      //   9: "Filler",
-                      //   10: "Filler",
-                      //   11: "Filler"
-                      //
                       selectedOptions: [],
                       onChanged: (selectedIds) {
                         setState(() => selectedIds);

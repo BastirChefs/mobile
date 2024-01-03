@@ -110,13 +110,7 @@ class _FavouritesState extends State<Favourites> {
                     for(var id in favourites) Column(
                       children: [
                         FoodBox(id: id),
-                        GestureDetector(
-                              onTap: () {
-                                removeRecipe(id);
-                                //update();
-                              },
-                              child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
-                            ),
+
                         ],
                       ) 
                   ]))

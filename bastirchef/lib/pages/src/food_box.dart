@@ -52,7 +52,7 @@ class _FoodBoxState extends State<FoodBox> {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData || !snapshot.data!.exists) {
           // Handle case where document doesn't exist
-          return Text('Recipe Not Found');
+          return Container();
         } else {
           // Data has been successfully fetched
           var recipeData = snapshot.data!.data() as Map<String, dynamic>;

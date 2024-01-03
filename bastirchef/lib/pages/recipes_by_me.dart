@@ -29,9 +29,9 @@ class _RecipesByMeState extends State<RecipesByMe> {
     });
     try {
       final recipeSnapshot = await FirebaseFirestore.instance
-        .collection('recipes')
-        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .get();
+          .collection('recipes')
+          .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .get();
       recipeSnapshot.docs.forEach((doc) {
         documentIds.add(doc.id);
       });
@@ -47,7 +47,7 @@ class _RecipesByMeState extends State<RecipesByMe> {
       // print(userData);
 
       // userRecipes = userData['recipes'];
-      
+
     } catch (e) {
       print(e);
     }
@@ -98,17 +98,17 @@ class _RecipesByMeState extends State<RecipesByMe> {
           appBar: AppBar(
             backgroundColor: Color(0xFF282828),
             leading: GestureDetector(
-            onTap: () {
-              setState(() {
-                Navigator.pop(context);
-              });
-            },
-            child: Icon(
-              Icons.arrow_back_ios_new_outlined,
-              color: Color(0xFFE3E3E3),
-              size: 40,
+              onTap: () {
+                setState(() {
+                  Navigator.pop(context);
+                });
+              },
+              child: Icon(
+                Icons.arrow_back_ios_new_outlined,
+                color: Color(0xFFE3E3E3),
+                size: 40,
+              ),
             ),
-          ),
             title: Text(
               "Recipes By Me",
               style: TextStyle(
@@ -126,12 +126,15 @@ class _RecipesByMeState extends State<RecipesByMe> {
                       children: [
                         FoodBox(id: id),
                         GestureDetector(
-                          onTap: () {
-                            deleteRecipe(id);
-                            update();
-                          },
-                          child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
-                        ),
+                            onTap: () {
+                              deleteRecipe(id);
+                              update();
+                            },
+                          child: Icon(
+                            Icons.delete_outline_outlined, // Replace this with the desired icon
+                            color: Colors.red, // Set the color of the icon
+                            size: 30, // Set the size of the icon
+                          ),),
                         SizedBox(height: 20),
                       ],),
                   ]))
