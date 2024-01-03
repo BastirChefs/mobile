@@ -31,6 +31,7 @@ class _ProfileState extends State<Profile> {
   final List<String> units = ['gr', 'cl', 'kg', 'ml', 'pcs']; // Example units
   TextEditingController ingredientNameController = TextEditingController();
   List<Map<String, dynamic>> allIngredients = [];
+  String errorMessage = '';
   //suggest end
   Uint8List? _file;
   String photoUrl = "";
@@ -443,6 +444,17 @@ class _ProfileState extends State<Profile> {
                                                         });
                                                       },
                                                     ),
+                                                    if (errorMessage.isNotEmpty)
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10),
+                                                        child: Text(
+                                                            errorMessage,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red)),
+                                                      ),
                                                   ],
                                                 ),
                                               ),
@@ -450,6 +462,7 @@ class _ProfileState extends State<Profile> {
                                                 TextButton(
                                                   child: Text('Cancel'),
                                                   onPressed: () {
+                                                    errorMessage = "";
                                                     Navigator.of(context).pop();
                                                   },
                                                 ),
@@ -462,9 +475,16 @@ class _ProfileState extends State<Profile> {
                                                             .text.isNotEmpty) {
                                                       print(
                                                           'Ingredient: ${ingredientNameController.text}, Unit: $selectedUnit');
+                                                      sendSuggestion();
+                                                      errorMessage = "";
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    } else {
+                                                      setState(() {
+                                                        errorMessage =
+                                                            'Please select a unit and enter an ingredient name.';
+                                                      });
                                                     }
-                                                    sendSuggestion();
-                                                    Navigator.of(context).pop();
                                                   },
                                                 ),
                                               ],
