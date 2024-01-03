@@ -1,29 +1,92 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
 
+import 'package:bastirchef/pages/src/drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:bastirchef/pages/src/food_box.dart';
 import 'package:bastirchef/resources/auth_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'src/item_box.dart';
+import 'src/drop_down_text_field.dart';
+import 'src/button.dart';
 
 class Storage extends StatefulWidget {
   @override
   State<Storage> createState() => _StorageState();
 }
 
+
 class _StorageState extends State<Storage> {
   var userData = {};
+  List<Map<String, dynamic>> allIngredients = [];
   bool isLoading = false;
+  List<dynamic> selectedIds = [];
   Map<String, dynamic> userStorage = {};
 
   @override
   void initState() {
     super.initState();
-    getData();
+    _getIngredients();
+    getStorageData();
   }
 
-  getData() async {
+  void _addIngredient() {
+    DropDownState(
+      DropDown(
+        buttonText: "Add",
+        options: getOptions(),
+        selectedOptions: [],
+        selectedItems: (List<dynamic> selectedList) {
+          setState(() {
+            selectedIds = selectedList;
+            print(selectedIds);
+          });
+
+          // Show a dialog to input the amount if an ingredient is selected
+          if (selectedList.isNotEmpty) {
+            _showAmountDialog(context);
+          }
+        },
+        enableMultipleSelection: false,
+      ),
+    ).showModal(context);
+  }
+
+  void _showAmountDialog(BuildContext context) {
+    TextEditingController amountController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Amount'),
+          content: TextField(
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: 'Enter the amount',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Perform actions with the entered amount
+                if (amountController.text.isNotEmpty) {
+                  // Call your addToStorage function passing the ingredient and amount
+                  print(selectedIds[0]);
+                  addToStorage( allIngredients[selectedIds[0]]['name'], int.tryParse(amountController.text) ?? 0);
+                }
+                Navigator.of(context).pop();
+              },
+              child: Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  getStorageData() async {
     setState(() {
       isLoading = true;
     });
@@ -37,7 +100,7 @@ class _StorageState extends State<Storage> {
       print(userData);
 
       userStorage = userData['storage'];
-      
+
     } catch (e) {
       print(e);
     }
@@ -91,6 +154,39 @@ class _StorageState extends State<Storage> {
       isLoading = false;
     });
   }
+
+  Future<void> _getIngredients() async {
+    try {
+      // Fetch ingredients
+      QuerySnapshot querySnapshot =
+      await FirebaseFirestore.instance.collection('ingredients').get();
+      setState(() {
+        allIngredients = querySnapshot.docs
+            .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Map<int, String> getOptions() {
+    Map<int, String> options = {};
+    print(allIngredients.length);
+    for (int i = 0; i < allIngredients.length; i++) {
+      options[i] = allIngredients[i]['name'].toString();
+    }
+    print("options: ");
+    print(options);
+    return options;
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +256,22 @@ class _StorageState extends State<Storage> {
                           ],
                         ),
                       ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFE3E3E3),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: CustomButton(
+                        text: 'Add Ingredient',
+                        onPressed: () {
+                          setState(() {
+                            // ingredients.add('New Ingredient');
+                            _addIngredient();
+
+                          });
+                        },
+                      ),
+                    )
                   ])))
           )
       ),
