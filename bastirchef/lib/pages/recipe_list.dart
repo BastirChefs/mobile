@@ -29,6 +29,7 @@ class _RecipeListState extends State<RecipeList> {
       isLoading = true;
     });
     try {
+      List existing_recipes = [];
       var userSnap = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -37,6 +38,18 @@ class _RecipeListState extends State<RecipeList> {
       userData = userSnap.data()!;
       print(userData);
       recipes = userData['recipe_list'][widget.recipeListName];
+
+      for (var id in recipes) {
+          var docSnapshot = await FirebaseFirestore.instance
+              .collection('recipes')
+              .doc(id)
+              .get();
+
+          if (docSnapshot.exists) {
+            existing_recipes.add(id);
+          }
+        }
+      recipes = existing_recipes;
       
     } catch (e) {
       print(e);
@@ -116,6 +129,7 @@ class _RecipeListState extends State<RecipeList> {
                         GestureDetector(
                               onTap: () {
                                 removeRecipe(item);
+                                getData();
                                 //update();
                               },
                               child: Text("Remove", style: TextStyle(color: Colors.red, fontSize: 12.0),)
