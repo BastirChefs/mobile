@@ -125,17 +125,7 @@ class _RecipesByMeState extends State<RecipesByMe> {
                     Column(
                       children: [
                         FoodBox(id: id),
-                        GestureDetector(
-                            onTap: () {
-                              deleteRecipe(id);
-                              getData();
-                              //update();
-                            },
-                          child: Icon(
-                            Icons.delete_outline_outlined, // Replace this with the desired icon
-                            color: Colors.red, // Set the color of the icon
-                            size: 30, // Set the size of the icon
-                          ),),
+                        
                         Row(
                           mainAxisAlignment: MainAxisAlignment
                               .center, // Center the icons horizontally
@@ -144,7 +134,7 @@ class _RecipesByMeState extends State<RecipesByMe> {
                             GestureDetector(
                               onTap: () {
                                 deleteRecipe(id);
-                                update();
+                                getData();
                               },
                               child: CircleAvatar(
                                 radius: 20,
