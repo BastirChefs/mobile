@@ -22,7 +22,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   var userData = {};
   List<Map<String, dynamic>> allIngredients = [];
   bool isLoading = false;
-  List<dynamic> selectedIds = [];
+  List<String> selectedIds = [];
   Uint8List? _file;
 
   @override
@@ -117,23 +117,29 @@ class _CreateRecipeState extends State<CreateRecipe> {
     });
   }
 
-  void _addIngredient() {
-    DropDownState(
-      DropDown(
-        buttonText: "Add",
-        options: getOptions(),
-        selectedOptions: [],
-        selectedItems: (List<dynamic> selectedList) {
-          setState(() {
-            selectedIds = selectedList;
-            print(selectedIds);
-          });
-          // Logic to add selected ingredients to the ingredients list
-        },
-        enableMultipleSelection: true,
-      ),
-    ).showModal(context);
-  }
+void _addIngredient() {
+  DropDownState(
+    DropDown(
+      buttonText: "Add",
+      options: getOptions(),
+      selectedOptions: selectedIds, // Now correctly typed as List<String>
+      selectedItems: (List<dynamic> newSelectedList) {
+        setState(() {
+          // Append new selections to existing list without duplicates
+          for (var ingredient in newSelectedList) {
+            String ingredientString = ingredient as String; // Cast dynamic to String
+            if (!selectedIds.contains(ingredientString)) {
+              selectedIds.add(ingredientString);
+            }
+          }
+        });
+      },
+      enableMultipleSelection: true,
+    ),
+  ).showModal(context);
+}
+
+
 
   final List<String> ingredients = [
     "Example Ingredient 1",
