@@ -50,6 +50,7 @@ class _EditRecipeState extends State<EditRecipe> {
         _descriptionTextController.text = recipeData['recipeText'];
         photoUrl = recipeData['image'];
         recipeData['ingredients'].keys.forEach((key) => selectedIds.add(key));
+        mainIngredients = recipeData['mainIngredients'];
         // Handle photo loading if needed
       }
       var userSnap = await FirebaseFirestore.instance
