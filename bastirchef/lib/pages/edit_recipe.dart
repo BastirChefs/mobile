@@ -329,32 +329,38 @@ class _EditRecipeState extends State<EditRecipe> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            if(_file == null) Container(
-              height: 200, 
-              width: double.infinity,
-              child: Image.network(
-                      recipeData['image'],
-                      fit: BoxFit.cover, // Adjust the fit based on your requirement
-                    ),
-            ) ,
+            if(_file == null) 
+              Container(
+                height: 200, 
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  ),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(recipeData['image']),
+                  ),
+                ),
+              ),
+              
             if (_file != null) 
               Container(
-                          height: 200, // Height for the recipe photo
-                          width: double.infinity, // Full width of the container
-                          decoration: BoxDecoration(
-                            image: _file != null
-                                ? DecorationImage(
-                                    fit: BoxFit.cover,
-                                    alignment: FractionalOffset.topCenter,
-                                    image: MemoryImage(_file!),
-                                  )
-                                : null, // Return null if _file is null
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(30.0),
-                              bottomRight: Radius.circular(30.0),
-                            ),
-                          ),
-              ),      
+                height: 200, // Height for the recipe photo
+                width: double.infinity, // Full width of the container
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  ),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    alignment: FractionalOffset.topCenter,
+                    image: MemoryImage(_file!),
+                  ),
+                ),
+              ),  
             Padding(
               padding: EdgeInsets.only( top: 16, bottom: 16, left: 16, right: 16),
               child: Column(
