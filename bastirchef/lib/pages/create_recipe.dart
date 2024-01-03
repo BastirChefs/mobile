@@ -24,7 +24,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
   bool isLoading = false;
   List<String> selectedIds = [];
   Uint8List? _file;
-
+  Map<String, TextEditingController> amountControllers = {};
   @override
   void initState() {
     super.initState();
@@ -37,9 +37,9 @@ class _CreateRecipeState extends State<CreateRecipe> {
     });
     try {
       var userSnap = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       userData = userSnap.data()!;
 
@@ -48,7 +48,6 @@ class _CreateRecipeState extends State<CreateRecipe> {
       allIngredients = querySnapshot.docs
           .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
           .toList();
-      
     } catch (e) {
       print(e);
     }
@@ -59,7 +58,7 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
   Map<int, String> getOptions() {
     Map<int, String> options = {};
-    for(int i = 0; i < allIngredients.length; i++){
+    for (int i = 0; i < allIngredients.length; i++) {
       options[i] = allIngredients[i]['name'];
     }
     return options;
@@ -72,7 +71,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
     String photoUrl = "";
     try {
       if (_file != null) {
-        photoUrl = await StorageMethods().uploadImageToStorage('posts', _file!, false);
+        photoUrl =
+            await StorageMethods().uploadImageToStorage('posts', _file!, false);
         print('Image uploaded successfully. URL: $photoUrl');
       } else {
         print('Error: _file is null.');
@@ -80,12 +80,21 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
       print("im here");
 
-      Map<String, dynamic> map = {'unit': 'gr', 'amount': 1};
-      Map<String, Map<String, dynamic>> ings = Map.fromIterable(
-        selectedIds,
-        key: (k) => k,
-        value: (v) => map,
-      );
+      // Map<String, dynamic> map = {'unit': 'gr', 'amount': 1};
+      // Map<String, Map<String, dynamic>> ings = Map.fromIterable(
+      //   selectedIds,
+      //   key: (k) => k,
+      //   value: (v) => map,
+      // );
+      Map<String, Map<String, dynamic>> ings = {};
+      for (var ingredient in selectedIds) {
+      String amount = amountControllers[ingredient]?.text ?? '0';
+      String unit = allIngredients.firstWhere(
+          (element) => element['name'] == ingredient,
+          orElse: () => {'unit': ''})['unit'];
+
+      ings[ingredient] = {'unit': unit, 'amount': amount};
+    }
 
       var recipe = {
         'recipeName': _titleTextController.text.toString(),
@@ -101,7 +110,8 @@ class _CreateRecipeState extends State<CreateRecipe> {
 
       await FirebaseFirestore.instance.collection('recipes').add(recipe);
       print('Recipe added successfully.');
-          // Navigate to Profile page after successful share
+      // Navigate to Profile page after successful share
+      Navigator.pop(context);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Profile()),
@@ -117,29 +127,28 @@ class _CreateRecipeState extends State<CreateRecipe> {
     });
   }
 
-void _addIngredient() {
-  DropDownState(
-    DropDown(
-      buttonText: "Add",
-      options: getOptions(),
-      selectedOptions: selectedIds, // Now correctly typed as List<String>
-      selectedItems: (List<dynamic> newSelectedList) {
-        setState(() {
-          // Append new selections to existing list without duplicates
-          for (var ingredient in newSelectedList) {
-            String ingredientString = ingredient as String; // Cast dynamic to String
-            if (!selectedIds.contains(ingredientString)) {
-              selectedIds.add(ingredientString);
+  void _addIngredient() {
+    DropDownState(
+      DropDown(
+        buttonText: "Add",
+        options: getOptions(),
+        selectedOptions: selectedIds, // Now correctly typed as List<String>
+        selectedItems: (List<dynamic> newSelectedList) {
+          setState(() {
+            // Append new selections to existing list without duplicates
+            for (var ingredient in newSelectedList) {
+              String ingredientString =
+                  ingredient as String; // Cast dynamic to String
+              if (!selectedIds.contains(ingredientString)) {
+                selectedIds.add(ingredientString);
+              }
             }
-          }
-        });
-      },
-      enableMultipleSelection: true,
-    ),
-  ).showModal(context);
-}
-
-
+          });
+        },
+        enableMultipleSelection: true,
+      ),
+    ).showModal(context);
+  }
 
   final List<String> ingredients = [
     "Example Ingredient 1",
@@ -193,13 +202,39 @@ void _addIngredient() {
       },
     );
   }
+
   List<dynamic> mainIngredients = [];
+
   Column buildIngredientsList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: selectedIds.map((ingredient) {
+        // Create a new TextEditingController if it does not exist for this ingredient
+        amountControllers.putIfAbsent(ingredient, () => TextEditingController());
+
+        String unit = allIngredients.firstWhere(
+            (element) => element['name'] == ingredient,
+            orElse: () => {'unit': 'unknown'})['unit'];
+
         return ListTile(
-          title: Text(ingredient),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(ingredient),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: amountControllers[ingredient],
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
+                    suffixText: unit,
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+            ],
+          ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min, // To keep the row size to a minimum
             children: [
@@ -222,6 +257,7 @@ void _addIngredient() {
                   setState(() {
                     selectedIds.remove(ingredient);
                     mainIngredients.remove(ingredient); // Also remove from mainIngredients if it's there
+                    amountControllers.remove(ingredient); // Remove its controller
                   });
                 },
               ),
@@ -231,7 +267,6 @@ void _addIngredient() {
       }).toList(),
     );
   }
-
 
 
   TextEditingController _titleTextController = TextEditingController();
@@ -265,29 +300,30 @@ void _addIngredient() {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            if (_file != null) 
+            if (_file != null)
               Container(
-                          height: 200, // Height for the recipe photo
-                          width: double.infinity, // Full width of the container
-                          decoration: BoxDecoration(
-                            image: _file != null
-                                ? DecorationImage(
-                                    fit: BoxFit.cover,
-                                    alignment: FractionalOffset.topCenter,
-                                    image: MemoryImage(_file!),
-                                  )
-                                : null, // Return null if _file is null
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(30.0),
-                              bottomRight: Radius.circular(30.0),
-                            ),
-                          ),
-              ),      
+                height: 200, // Height for the recipe photo
+                width: double.infinity, // Full width of the container
+                decoration: BoxDecoration(
+                  image: _file != null
+                      ? DecorationImage(
+                          fit: BoxFit.cover,
+                          alignment: FractionalOffset.topCenter,
+                          image: MemoryImage(_file!),
+                        )
+                      : null, // Return null if _file is null
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  ),
+                ),
+              ),
             Padding(
-              padding: EdgeInsets.only( top: 16, bottom: 16, left: 16, right: 16),
+              padding:
+                  EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [      
+                children: [
                   // // Add photo button
                   // Center(
                   //   child: IconButton(
@@ -295,7 +331,7 @@ void _addIngredient() {
                   //     onPressed: () => _selectImage(context),
                   //   ),
                   // ),
-            
+
                   TextField(
                     controller: _titleTextController,
                     decoration: InputDecoration(
@@ -309,7 +345,8 @@ void _addIngredient() {
                     children: [
                       Text(
                         "Ingredients",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       CustomButton(
                         text: 'Add Ingredient',
@@ -360,15 +397,15 @@ void _addIngredient() {
             ),
           ],
         ),
-        
       ),
 
-            floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _selectImage(context),
         backgroundColor: Color(0xFFD75912),
         child: Icon(Icons.photo_camera), // Sets the background color to orange
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Positions the button at the bottom right
+      floatingActionButtonLocation: FloatingActionButtonLocation
+          .endFloat, // Positions the button at the bottom right
     );
   }
 }
