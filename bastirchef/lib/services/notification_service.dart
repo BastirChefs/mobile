@@ -68,9 +68,9 @@ class NotificationService {
       return null;
     }
   }
+}
 
-  Future<void> handleBackgroundMessage(RemoteMessage message) async {
-    print('Title: ${message.notification?.title}');
-    print('Body: ${message.notification?.body}');
-  }
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  print('Title: ${message.notification?.title}');
+  print('Body: ${message.notification?.body}');
 }
