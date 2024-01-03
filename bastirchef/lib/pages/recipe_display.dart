@@ -17,12 +17,14 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
   var userData = {};
   bool isLoading = false;
   TextEditingController commentController = TextEditingController();
+  List<Map<String, dynamic>> allIngredients = [];
   var username;
 
   @override
   void initState() {
     super.initState();
     getData();
+    fetchIngredients();
   }
 
   @override
@@ -59,6 +61,33 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     });
   }
 
+  Future<void> fetchIngredients() async {
+    try {
+      // Fetch ingredients
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('ingredients').get();
+      setState(() {
+        allIngredients = querySnapshot.docs
+            .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  bool checkVerified(String ingredientName) {
+    // Find the ingredient in allIngredients with the matching name
+    var ingredient = allIngredients.firstWhere(
+      (ing) => ing['name'] == ingredientName,
+    );
+
+    // Return false only if isVerified is explicitly set to false
+    return ingredient['isVerified'] != false;
+  }
+
   reportRecipe() async {
     setState(() {
       isLoading = true;
@@ -68,7 +97,6 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
           .collection('recipes')
           .doc(widget.id)
           .update({'isReported': true});
-
     } catch (e) {
       print(e);
     }
@@ -186,11 +214,11 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     });
     Map<String, dynamic> missingItems = userData['shopping_list'];
     for (var item in list) {
-      for(var key in item.keys){
+      for (var key in item.keys) {
         if (userData['shopping_list'][key] == null) {
           //Map item = {keys.key: keys.value};
           missingItems[key] = item[key];
-        } else{
+        } else {
           var value = userData['shopping_list'][key];
           value += item[key];
           //Map item = {keys.key: value};
@@ -201,9 +229,9 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     }
     print(missingItems);
     await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'shopping_list': missingItems});
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({'shopping_list': missingItems});
 
     setState(() {
       isLoading = false;
@@ -330,7 +358,8 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(recipeData['image']), // Path to your image asset
+                              image: NetworkImage(recipeData[
+                                  'image']), // Path to your image asset
                               fit: BoxFit
                                   .cover, // This will cover the entire space of the container
                             ),
@@ -356,8 +385,10 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.flag), // Using a flag icon as an example for report
-                                    color: Colors.white, // Color can be adjusted based on your design
+                                    icon: Icon(Icons
+                                        .flag), // Using a flag icon as an example for report
+                                    color: Colors
+                                        .white, // Color can be adjusted based on your design
                                     onPressed: () {
                                       // Show confirmation dialog
                                       showDialog(
@@ -365,20 +396,22 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                         builder: (BuildContext context) {
                                           return AlertDialog(
                                             title: Text('Report Recipe'),
-                                            content: Text('Are you sure you want to report this recipe?'),
+                                            content: Text(
+                                                'Are you sure you want to report this recipe?'),
                                             actions: <Widget>[
                                               TextButton(
                                                 child: Text('No'),
                                                 onPressed: () {
-                                                  Navigator.of(context).pop(); // Close the dialog
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog
                                                 },
                                               ),
                                               TextButton(
                                                 child: Text('Yes'),
                                                 onPressed: () {
-                                                  // TODO: Buraya report functionality çağırılacak
                                                   reportRecipe();
-                                                  Navigator.of(context).pop(); // Close the dialog after confirming
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog after confirming
                                                 },
                                               ),
                                             ],
@@ -387,7 +420,6 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                       );
                                     },
                                   ),
-
                                   IconButton(
                                     icon: Icon(Icons.add,
                                         color: Colors
@@ -407,7 +439,8 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.all(16.0),
+                                                    padding:
+                                                        EdgeInsets.all(16.0),
                                                     child: Text(
                                                         "Which recipe list would you like to add this recipe to?"),
                                                   ),
@@ -420,7 +453,8 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                         value: listName,
                                                         groupValue:
                                                             selectedListName,
-                                                        onChanged: (String? value) {
+                                                        onChanged:
+                                                            (String? value) {
                                                           if (value != null) {
                                                             setState(() =>
                                                                 selectedListName =
@@ -451,18 +485,28 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: (userData['favorite_recipes'] != null && userData['favorite_recipes'].contains(widget.id))
-                                        ? Icon(Icons.star, color: Colors.white) // Filled star if in favorites
-                                        : Icon(Icons.star_border, color: Colors.white), // Outlined star if not in favorites
+                                    icon: (userData['favorite_recipes'] !=
+                                                null &&
+                                            userData['favorite_recipes']
+                                                .contains(widget.id))
+                                        ? Icon(Icons.star,
+                                            color: Colors
+                                                .white) // Filled star if in favorites
+                                        : Icon(Icons.star_border,
+                                            color: Colors
+                                                .white), // Outlined star if not in favorites
                                     onPressed: () {
-                                      if (userData['favorite_recipes'] != null && userData['favorite_recipes'].contains(widget.id)) {
-                                        removeFromFav(widget.id); // Remove from favorites if it's already in there
+                                      if (userData['favorite_recipes'] !=
+                                              null &&
+                                          userData['favorite_recipes']
+                                              .contains(widget.id)) {
+                                        removeFromFav(widget
+                                            .id); // Remove from favorites if it's already in there
                                       } else {
                                         addToFav(); // Add to favorites if it's not there
                                       }
                                     },
                                   ),
-
                                   IconButton(
                                     icon: Icon(Icons.comment,
                                         color: Colors.white), // Comment icon
@@ -494,9 +538,11 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                           : CircleAvatar(
                                                               child: Icon(Icons
                                                                   .person)),
-                                                      title: Text(comment[
-                                                          'comment']),
-                                                      subtitle: Text(comment['userId'].toString()),
+                                                      title: Text(
+                                                          comment['comment']),
+                                                      subtitle: Text(
+                                                          comment['userId']
+                                                              .toString()),
                                                     );
                                                   },
                                                 ),
@@ -535,7 +581,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                                                                   .text);
                                                           commentController
                                                               .clear(); // Clear the text field after sending the comment
-                                                        } 
+                                                        }
                                                         setState(() {});
                                                       },
                                                     ),
@@ -570,22 +616,39 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                       padding: EdgeInsets.all(8.0),
                       margin:
                           EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                      width: MediaQuery.of(context).size.width -
-                          16, // Full width minus horizontal margins
+                      width: MediaQuery.of(context).size.width - 16,
                       decoration: BoxDecoration(
                         color: Colors.grey[300], // Grey color for the container
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...recipeData['ingredients']
-                              .entries
-                              .map((ingredient) {
-                            return Text(
-                                "•    ${ingredient.key}: ${ingredient.value['amount']} ${ingredient.value['unit']}");
-                          }).toList(),
-                        ],
+                        children: recipeData['ingredients']
+                            .entries
+                            .map<Widget>((ingredient) {
+                          bool isVerified = checkVerified(ingredient.key);
+                          false; // Assuming 'isVerified' is a boolean
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "• ${ingredient.key}: ${ingredient.value['amount']} ${ingredient.value['unit']}",
+                                  style: TextStyle(
+                                    color: isVerified
+                                        ? Colors.black
+                                        : Colors
+                                            .red, // Change color based on verification status
+                                  ),
+                                ),
+                              ),
+                              if (!isVerified)
+                                Icon(Icons.warning,
+                                    color: Colors.red,
+                                    size:
+                                        20) // Add a warning icon for unverified ingredients
+                            ],
+                          );
+                        }).toList(),
                       ),
                     ),
                     Padding(
