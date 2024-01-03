@@ -94,9 +94,14 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
     });
     try {
       await FirebaseFirestore.instance
-          .collection('recipes')
-          .doc(widget.id)
-          .update({'isReported': true});
+        .collection('recipes')
+        .doc(widget.id)
+        .update({'isReported': true});
+      var user_id = recipeData['userId'];
+      await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user_id)
+        .update({'isReported': true});
     } catch (e) {
       print(e);
     }
