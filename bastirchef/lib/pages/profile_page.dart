@@ -25,6 +25,11 @@ class _ProfileState extends State<Profile> {
   List<String> recipeListsNames = [];
   String newListName = "";
   TextEditingController newListNameController = TextEditingController();
+  //suggest
+  String? selectedUnit;
+  String ingredientName = '';
+  final List<String> units = ['gr', 'cl', 'kg', 'ml', 'pcs']; // Example units
+  TextEditingController ingredientNameController = TextEditingController();
   Uint8List? _file;
   String photoUrl = "";
 
@@ -39,6 +44,7 @@ class _ProfileState extends State<Profile> {
     newListNameController.dispose();
     super.dispose();
   }
+
   getData() async {
     setState(() {
       isLoading = true;
@@ -51,8 +57,9 @@ class _ProfileState extends State<Profile> {
 
       userData = userSnap.data()!;
       print(userData);
-      
-      if (userData.containsKey('recipe_list') && userData['recipe_list'] is Map<String, dynamic>) {
+
+      if (userData.containsKey('recipe_list') &&
+          userData['recipe_list'] is Map<String, dynamic>) {
         recipeListsNames = userData['recipe_list'].keys.toList();
         print(recipeListsNames);
       }
@@ -91,8 +98,10 @@ class _ProfileState extends State<Profile> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'recipe_list.$newListName': [],});
-      
+          .update({
+        'recipe_list.$newListName': [],
+      });
+
       setState(() {
         recipeListsNames.add(newListName);
       });
@@ -120,17 +129,16 @@ class _ProfileState extends State<Profile> {
           title: const Text('Select a Photo'),
           children: <Widget>[
             SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Text('Take a photo'),
-              onPressed: () async {
-                Navigator.pop(context);
-                Uint8List file = await pickImage(ImageSource.camera);
-                setState(() {
-                  _file = file;
-                });
-                updateProfilePic();
-              }
-            ),
+                padding: const EdgeInsets.all(20),
+                child: const Text('Take a photo'),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Uint8List file = await pickImage(ImageSource.camera);
+                  setState(() {
+                    _file = file;
+                  });
+                  updateProfilePic();
+                }),
             SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
                 child: const Text('Choose from Gallery'),
@@ -161,7 +169,8 @@ class _ProfileState extends State<Profile> {
     });
     try {
       if (_file != null) {
-        photoUrl = await StorageMethods().uploadImageToStorage('posts', _file!, false);
+        photoUrl =
+            await StorageMethods().uploadImageToStorage('posts', _file!, false);
         print('Image uploaded successfully. URL: $photoUrl');
       } else {
         print('Error: _file is null.');
@@ -170,7 +179,9 @@ class _ProfileState extends State<Profile> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'userImage': photoUrl,});
+          .update({
+        'userImage': photoUrl,
+      });
     } catch (e) {
       print(e);
     }
@@ -178,7 +189,6 @@ class _ProfileState extends State<Profile> {
       isLoading = false;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +274,7 @@ class _ProfileState extends State<Profile> {
                                 height: 8.0,
                               ),
                               GestureDetector(
-                                onTap: ()  { 
+                                onTap: () {
                                   _selectImage(context);
                                 },
                                 child: Row(
@@ -287,50 +297,135 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                     //2nd box: create recipe, recipe created by me,my storage
-                    Container(
-                      padding: EdgeInsets.only(
-                          top: 16, bottom: 16, left: 20, right: 200),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          CustomButton(
-                            text: 'Create Recipe',
-                            onPressed: () {
-                              print('Create Recipe button pressed!');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CreateRecipe(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: CustomButton(
+                                  text: 'Create Recipe',
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CreateRecipe()),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              ),
+                              SizedBox(width: 10), // Space between buttons
+                              Expanded(
+                                child: CustomButton(
+                                  text: 'Storage',
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Storage()),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 10.0),
-                          CustomButton(
-                            text: 'Storage',
-                            onPressed: () {
-                              print('Storage button pressed!');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Storage(),
+                          SizedBox(height: 10), // Space between button rows
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: CustomButton(
+                                  text: 'Recipes by Me',
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => RecipesByMe()),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: 16.0),
-                          CustomButton(
-                            text: 'Recipes by Me',
-                            onPressed: () {
-                              print('Recipes by Me button pressed!');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RecipesByMe(),
+                              ),
+                              SizedBox(width: 10), // Space between buttons
+                              Expanded(
+                                child: CustomButton(
+                                  text: 'Suggest Ingredient',
+                                  onPressed: () {
+                                    selectedUnit = null;
+                                    ingredientNameController.clear();
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          // Add StatefulBuilder here
+                                          builder: (context, setState) {
+                                            // 'setState' inside StatefulBuilder
+                                            return AlertDialog(
+                                              title: Text('Suggest Ingredient'),
+                                              content: SingleChildScrollView(
+                                                child: ListBody(
+                                                  children: <Widget>[
+                                                    TextField(
+                                                      controller:
+                                                          ingredientNameController,
+                                                      decoration: InputDecoration(
+                                                          hintText:
+                                                              "Enter ingredient name"),
+                                                    ),
+                                                    SizedBox(height: 20),
+                                                    DropdownButton<String>(
+                                                      value: selectedUnit,
+                                                      hint: Text("Select Unit"),
+                                                      isExpanded: true,
+                                                      items: units
+                                                          .map((String unit) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: unit,
+                                                          child: Text(unit),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged:
+                                                          (String? newValue) {
+                                                        setState(() {
+                                                          // Call setState to update the UI
+                                                          selectedUnit =
+                                                              newValue;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('Cancel'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text('Submit'),
+                                                  onPressed: () {
+                                                    if (selectedUnit != null &&
+                                                        ingredientNameController.text.isNotEmpty) {
+                                                      print('Ingredient: ${ingredientNameController.text}, Unit: $selectedUnit');
+                                                    }
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              )
+                            ],
                           ),
                         ],
                       ),
@@ -362,16 +457,23 @@ class _ProfileState extends State<Profile> {
                                           title: Text("New Recipe List"),
                                           content: TextField(
                                             controller: newListNameController,
-                                            decoration: InputDecoration(hintText: "Enter List Name"),
+                                            decoration: InputDecoration(
+                                                hintText: "Enter List Name"),
                                           ),
                                           actions: <Widget>[
                                             TextButton(
-                                              child: Text("Add", style: TextStyle(color: Color(0xFFD75912))),
+                                              child: Text("Add",
+                                                  style: TextStyle(
+                                                      color:
+                                                          Color(0xFFD75912))),
                                               onPressed: () {
-                                                newListName = newListNameController.text;
-                                                Navigator.of(context).pop(); // Close the dialog
+                                                newListName =
+                                                    newListNameController.text;
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
                                                 updateRecipeList();
-                                                newListNameController.clear(); // Clear the text field
+                                                newListNameController
+                                                    .clear(); // Clear the text field
                                               },
                                             ),
                                           ],
@@ -382,11 +484,10 @@ class _ProfileState extends State<Profile> {
                                   child: Icon(
                                     Icons.add,
                                     size: 24.0,
-                                    color: Color(0xFFD75912), // Orange color for the icon
+                                    color: Color(
+                                        0xFFD75912), // Orange color for the icon
                                   ),
                                 ),
-
-
                               ],
                             ),
                             SizedBox(height: 16.0),
@@ -423,13 +524,15 @@ class _ProfileState extends State<Profile> {
                                       ),
                                     ),
                                     onTap: () {
-                                      print(recipeListsNames[index] + "clicked");
+                                      print(
+                                          recipeListsNames[index] + "clicked");
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => RecipeList(
-                                          recipeListName: recipeListsNames[index], // Pass the recipe list name here
-                                        ),
+                                            recipeListName: recipeListsNames[
+                                                index], // Pass the recipe list name here
+                                          ),
                                         ),
                                       );
                                     },
@@ -455,10 +558,6 @@ class _ProfileState extends State<Profile> {
                               ),
                             );
                           }
-
-                          // Call your sign out function here
-                          print(
-                              'Sign out tapped'); // Replace with your sign out function
                         },
                         child: Row(
                           children: [
