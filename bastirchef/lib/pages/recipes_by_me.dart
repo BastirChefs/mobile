@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print, use_key_in_widget_constructors
 
+import 'package:bastirchef/pages/edit_recipe.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,7 +48,6 @@ class _RecipesByMeState extends State<RecipesByMe> {
       // print(userData);
 
       // userRecipes = userData['recipes'];
-
     } catch (e) {
       print(e);
     }
@@ -78,10 +78,7 @@ class _RecipesByMeState extends State<RecipesByMe> {
       isLoading = true;
     });
     try {
-      await FirebaseFirestore.instance
-          .collection('recipes')
-          .doc(id)
-          .delete();
+      await FirebaseFirestore.instance.collection('recipes').doc(id).delete();
     } catch (e) {
       print(e);
     }
@@ -119,27 +116,63 @@ class _RecipesByMeState extends State<RecipesByMe> {
             ),
           ),
           body: SingleChildScrollView(
-              child: Center(child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children : [
-                    for(var id in documentIds) Column(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var id in documentIds)
+                    Column(
                       children: [
                         FoodBox(id: id),
-                        GestureDetector(
-                            onTap: () {
-                              deleteRecipe(id);
-                              update();
-                            },
-                          child: Icon(
-                            Icons.delete_outline_outlined, // Replace this with the desired icon
-                            color: Colors.red, // Set the color of the icon
-                            size: 30, // Set the size of the icon
-                          ),),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // Center the icons horizontally
+                          children: [
+                            // Delete Button
+                            GestureDetector(
+                              onTap: () {
+                                deleteRecipe(id);
+                                update();
+                              },
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.redAccent,
+                                child: Icon(
+                                  Icons.delete_outline_outlined,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 20), // Space between buttons
+                            // Edit Button
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => EditRecipe(id: id),
+                                  ),
+                                );
+                              },
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundColor: const Color.fromARGB(255, 97, 103, 114),
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         SizedBox(height: 20),
-                      ],),
-                  ]))
-          )
-      ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          )),
     );
   }
 }
