@@ -8,12 +8,49 @@ class NotificationService {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FlutterLocalNotificationsPlugin local_notifications =
+      FlutterLocalNotificationsPlugin();
+
+  static final AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'foreground_notification_channel',
+    'Foreground Notifications',
+    description: 'This channel is used for foreground notifications.',
+    importance: Importance.max,
+  );
 
   Future<void> initNotifications() async {
     await messaging.requestPermission();
     final fcmToken = await getFcmToken();
     print(fcmToken);
     FirebaseMessaging.onBackgroundMessage(await handleBackgroundMessage);
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    await local_notifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      if (notification != null) {
+        local_notifications.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channelDescription: channel.description,
+                icon: '@mipmap/ic_launcher',
+              ),
+            ));
+      }
+    });
   }
 
   Future<String?> getFcmToken() async {
