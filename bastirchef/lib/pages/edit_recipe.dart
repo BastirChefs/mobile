@@ -43,9 +43,9 @@ class _EditRecipeState extends State<EditRecipe> {
     });
     try {
       var recipeSnap = await FirebaseFirestore.instance
-      .collection('recipes')
-      .doc(widget.id) // Use the passed ID
-      .get();
+          .collection('recipes')
+          .doc(widget.id) // Use the passed ID
+          .get();
 
       if (recipeSnap.exists) {
         recipeData = recipeSnap.data()!;
@@ -57,9 +57,9 @@ class _EditRecipeState extends State<EditRecipe> {
         // Handle photo loading if needed
       }
       var userSnap = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
 
       userData = userSnap.data()!;
 
@@ -71,9 +71,9 @@ class _EditRecipeState extends State<EditRecipe> {
 
       // Initialize amountControllers with ingredient amounts
       recipeData['ingredients'].forEach((key, value) {
-        amountControllers[key] = TextEditingController(text: value['amount'].toString());
+        amountControllers[key] =
+            TextEditingController(text: value['amount'].toString());
       });
-      
     } catch (e) {
       print(e);
     }
@@ -84,7 +84,7 @@ class _EditRecipeState extends State<EditRecipe> {
 
   Map<int, String> getOptions() {
     Map<int, String> options = {};
-    for(int i = 0; i < allIngredients.length; i++){
+    for (int i = 0; i < allIngredients.length; i++) {
       options[i] = allIngredients[i]['name'];
     }
     return options;
@@ -97,7 +97,8 @@ class _EditRecipeState extends State<EditRecipe> {
     try {
       String updatedPhotoUrl = "";
       if (_file != null) {
-        updatedPhotoUrl = await StorageMethods().uploadImageToStorage('posts', _file!, false);
+        updatedPhotoUrl =
+            await StorageMethods().uploadImageToStorage('posts', _file!, false);
         print('Image uploaded successfully. URL: $photoUrl');
       } else {
         print('Error: _file is null.');
@@ -128,13 +129,16 @@ class _EditRecipeState extends State<EditRecipe> {
         'image': updatedPhotoUrl,
       };
 
-      await FirebaseFirestore.instance.collection('recipes').doc(widget.id).update(recipe);
-      print('Recipe added successfully.');
-          // Navigate to Profile page after successful share
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Profile()),
-      );
+      await FirebaseFirestore.instance
+          .collection('recipes')
+          .doc(widget.id)
+          .update(recipe);
+      // Navigate to Profile page after successful share
+      Navigator.pop(context);
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => Profile()),
+      // );
     } catch (e, stackTrace) {
       print('Error sharing recipe: $e\n$stackTrace');
       // Handle the error or throw an exception
@@ -156,7 +160,8 @@ class _EditRecipeState extends State<EditRecipe> {
           setState(() {
             // Append new selections to existing list without duplicates
             for (var ingredient in newSelectedList) {
-              String ingredientString = ingredient as String; // Cast dynamic to String
+              String ingredientString =
+                  ingredient as String; // Cast dynamic to String
               if (!selectedIds.contains(ingredientString)) {
                 selectedIds.add(ingredientString);
               }
@@ -167,7 +172,6 @@ class _EditRecipeState extends State<EditRecipe> {
       ),
     ).showModal(context);
   }
-
 
   pickImage(ImageSource source) async {
     final ImagePicker imagePicker = ImagePicker();
@@ -216,6 +220,7 @@ class _EditRecipeState extends State<EditRecipe> {
       },
     );
   }
+
   List<dynamic> mainIngredients = [];
 
   Column buildIngredientsList() {
@@ -223,7 +228,8 @@ class _EditRecipeState extends State<EditRecipe> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: selectedIds.map((ingredient) {
         // Create a new TextEditingController if it does not exist for this ingredient
-        amountControllers.putIfAbsent(ingredient, () => TextEditingController());
+        amountControllers.putIfAbsent(
+            ingredient, () => TextEditingController());
 
         String unit = allIngredients.firstWhere(
             (element) => element['name'] == ingredient,
@@ -269,8 +275,10 @@ class _EditRecipeState extends State<EditRecipe> {
                 onPressed: () {
                   setState(() {
                     selectedIds.remove(ingredient);
-                    mainIngredients.remove(ingredient); // Also remove from mainIngredients if it's there
-                    amountControllers.remove(ingredient); // Remove its controller
+                    mainIngredients.remove(
+                        ingredient); // Also remove from mainIngredients if it's there
+                    amountControllers
+                        .remove(ingredient); // Remove its controller
                   });
                 },
               ),
@@ -281,174 +289,176 @@ class _EditRecipeState extends State<EditRecipe> {
     );
   }
 
-
-
   TextEditingController _titleTextController = TextEditingController();
   TextEditingController _descriptionTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('recipes').doc(widget.id).get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Return a loading indicator or placeholder while data is being fetched.
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          // Handle error case
-          return Text('Error: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data == null) {
-          // Handle the case where no data is available
-          return Text('No data available');
-        } else {
-          // Data is available, update recipeData
-          recipeData = snapshot.data!.data() as Map<String, dynamic>;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF282828),
-        leading: GestureDetector(
-          onTap: () {
-            setState(() {
-              Navigator.pop(context);
-            });
-          },
-          child: Icon(
-            Icons.arrow_back_ios_new_outlined,
-            color: Color(0xFFE3E3E3),
-            size: 40,
-          ),
-        ),
-        title: Text(
-          "Edit Recipe",
-          style: TextStyle(
-            color: Color(0xFFE3E3E3),
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            if(_file == null) 
-              Container(
-                height: 200, 
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
+        future: FirebaseFirestore.instance
+            .collection('recipes')
+            .doc(widget.id)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Return a loading indicator or placeholder while data is being fetched.
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            // Handle error case
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            // Handle the case where no data is available
+            return Text('No data available');
+          } else {
+            // Data is available, update recipeData
+            recipeData = snapshot.data!.data() as Map<String, dynamic>;
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: Color(0xFF282828),
+                leading: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.pop(context);
+                    });
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios_new_outlined,
+                    color: Color(0xFFE3E3E3),
+                    size: 40,
                   ),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(recipeData['image']),
+                ),
+                title: Text(
+                  "Edit Recipe",
+                  style: TextStyle(
+                    color: Color(0xFFE3E3E3),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
                   ),
                 ),
               ),
-              
-            if (_file != null) 
-              Container(
-                height: 200, // Height for the recipe photo
-                width: double.infinity, // Full width of the container
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
-                  ),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    alignment: FractionalOffset.topCenter,
-                    image: MemoryImage(_file!),
-                  ),
-                ),
-              ),  
-            Padding(
-              padding: EdgeInsets.only( top: 16, bottom: 16, left: 16, right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [      
-                  // // Add photo button
-                  // Center(
-                  //   child: IconButton(
-                  //     icon: Icon(Icons.photo_camera),
-                  //     onPressed: () => _selectImage(context),
-                  //   ),
-                  // ),
-            
-                  TextField(
-                    controller: _titleTextController,
-                    decoration: InputDecoration(
-                      labelText: "Title",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Ingredients",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    if (_file == null)
+                      Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30.0),
+                            bottomRight: Radius.circular(30.0),
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(recipeData['image']),
+                          ),
+                        ),
                       ),
-                      CustomButton(
-                        text: 'Add Ingredient',
-                        onPressed: () {
-                          setState(() {
-                            // ingredients.add('New Ingredient');
-                            _addIngredient();
-                          });
-                        },
+                    if (_file != null)
+                      Container(
+                        height: 200, // Height for the recipe photo
+                        width: double.infinity, // Full width of the container
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30.0),
+                            bottomRight: Radius.circular(30.0),
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            alignment: FractionalOffset.topCenter,
+                            image: MemoryImage(_file!),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: buildIngredientsList(),
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: selectedIds
-                    //       .map((ingredient) => Text(ingredient))
-                    //       .toList(),
-                    // ),
-                  ),
-                  SizedBox(height: 20),
-                  TextField(
-                    controller: _descriptionTextController,
-                    decoration: InputDecoration(
-                      labelText: "Description",
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                  ),
-                  SizedBox(height: 20),
-                  CustomButton(
-                    text: 'Edit',
-                    onPressed: () {
-                      editRecipe();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        
-      ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 16, bottom: 16, left: 16, right: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // // Add photo button
+                          // Center(
+                          //   child: IconButton(
+                          //     icon: Icon(Icons.photo_camera),
+                          //     onPressed: () => _selectImage(context),
+                          //   ),
+                          // ),
 
-            floatingActionButton: FloatingActionButton(
-        onPressed: () => _selectImage(context),
-        backgroundColor: Color(0xFFD75912),
-        child: Icon(Icons.photo_camera), // Sets the background color to orange
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Positions the button at the bottom right
-    );
-  }
-  }
-  );
+                          TextField(
+                            controller: _titleTextController,
+                            decoration: InputDecoration(
+                              labelText: "Title",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Ingredients",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              CustomButton(
+                                text: 'Add Ingredient',
+                                onPressed: () {
+                                  setState(() {
+                                    // ingredients.add('New Ingredient');
+                                    _addIngredient();
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: buildIngredientsList(),
+                            // Column(
+                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                            //   children: selectedIds
+                            //       .map((ingredient) => Text(ingredient))
+                            //       .toList(),
+                            // ),
+                          ),
+                          SizedBox(height: 20),
+                          TextField(
+                            controller: _descriptionTextController,
+                            decoration: InputDecoration(
+                              labelText: "Description",
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                          ),
+                          SizedBox(height: 20),
+                          CustomButton(
+                            text: 'Edit',
+                            onPressed: () {
+                              editRecipe();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              floatingActionButton: FloatingActionButton(
+                onPressed: () => _selectImage(context),
+                backgroundColor: Color(0xFFD75912),
+                child: Icon(
+                    Icons.photo_camera), // Sets the background color to orange
+              ),
+              floatingActionButtonLocation: FloatingActionButtonLocation
+                  .endFloat, // Positions the button at the bottom right
+            );
+          }
+        });
   }
 }

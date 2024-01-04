@@ -114,10 +114,10 @@ class _CreateRecipeState extends State<CreateRecipe> {
       print('Recipe added successfully.');
       // Navigate to Profile page after successful share
       Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Profile()),
-      );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => Profile()),
+      // );
     } catch (e, stackTrace) {
       print('Error sharing recipe: $e\n$stackTrace');
       // Handle the error or throw an exception
