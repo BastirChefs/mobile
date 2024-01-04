@@ -31,6 +31,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _isLoading = true;
     });
 
+      // Check if fields are empty
+    if (_emailTextController.text.isEmpty || _passwordTextController.text.isEmpty || _usernameTextController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill all fields")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+
     String res = await AuthMethods().signUpUser(
       email: _emailTextController.text, 
       password: _passwordTextController.text, 
@@ -44,19 +56,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
       recipeHistory: [],
       userImage: "https://firebasestorage.googleapis.com/v0/b/bastirchef-3aeef.appspot.com/o/posts%2Fdefaultphoto.jpg?alt=media&token=c24e0732-8886-44c6-9931-949e1fbf8c89");
     if (res == "success") {
-      setState(() {
-        _isLoading = false;
-      });
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => LogInScreen()
           ),
       );
     } else {
-      setState(() {
-        _isLoading = false;
-      });
+      // Parse the error message
+      String errorMessage = res;
+      if (res.contains(']')) {
+        errorMessage = res.substring(res.indexOf(']') + 1).trim();
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void navigateToLogIn() {
