@@ -637,7 +637,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  "• ${ingredient.key}: ${ingredient.value['amount']} ${ingredient.value['unit']}",
+                                  "• ${ingredient.key.substring(0, 1).toUpperCase()}${ingredient.key.substring(1).toLowerCase()}: ${ingredient.value['amount']} ${ingredient.value['unit']}",
                                   style: TextStyle(
                                     color: isVerified
                                         ? Colors.black

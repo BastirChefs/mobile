@@ -63,6 +63,7 @@ class _StorageState extends State<Storage> {
           content: TextField(
             controller: amountController,
             keyboardType: TextInputType.number,
+
             decoration: InputDecoration(
               hintText: 'Enter the amount',
             ),
