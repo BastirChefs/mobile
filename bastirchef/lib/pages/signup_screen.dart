@@ -2,6 +2,7 @@ import 'package:bastirchef/pages/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:bastirchef/resources/auth_methods.dart';
 import 'package:bastirchef/pages/login_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bastirchef/pages/src/text_field_input.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -30,11 +31,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() {
       _isLoading = true;
     });
+    bool nameCheck = true;
+    final recipeSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('username', isEqualTo: _usernameTextController.text)
+          .get();
+      recipeSnapshot.docs.forEach((doc) {
+        if(doc.data()['username'] == _usernameTextController.text){
+          nameCheck = false;
+        }
+      });
 
       // Check if fields are empty
     if (_emailTextController.text.isEmpty || _passwordTextController.text.isEmpty || _usernameTextController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill all fields")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+    if (!nameCheck) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Username is already in use")),
       );
       setState(() {
         _isLoading = false;
