@@ -191,9 +191,7 @@ class _StorageState extends State<Storage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
           appBar: AppBar(
             backgroundColor: Color(0xFF282828),
             leading: GestureDetector(
@@ -275,7 +273,6 @@ class _StorageState extends State<Storage> {
                     )
                   ])))
           )
-      ),
-    );
+      );
   }
 }

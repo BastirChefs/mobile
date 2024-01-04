@@ -85,9 +85,7 @@ class SearchOutput extends StatefulWidget {
 
     @override
     Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         backgroundColor: Color(0xFFE3E3E3),
         body: SingleChildScrollView(
           child: Column(
@@ -134,7 +132,6 @@ class SearchOutput extends StatefulWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
     }
   }

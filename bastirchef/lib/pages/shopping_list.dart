@@ -125,9 +125,7 @@ class _ShoppingListState extends State<ShoppingList> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
           appBar: AppBar(
             backgroundColor: Color(0xFF282828),
             leading: Icon(
@@ -235,7 +233,6 @@ class _ShoppingListState extends State<ShoppingList> {
           )
 
 
-      ),
-    );
+      );
   }
 }

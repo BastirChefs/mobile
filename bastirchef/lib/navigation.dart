@@ -30,9 +30,7 @@ class _NavigationState extends State<Navigation> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-        home: Scaffold(
+    return Scaffold(
         body: _screens[_currentIndex],
         bottomNavigationBar: SalomonBottomBar(
           currentIndex: _currentIndex,
@@ -66,7 +64,6 @@ class _NavigationState extends State<Navigation> {
             ),
           ],
         ),
-        )
-    );
+        );
   }
 }

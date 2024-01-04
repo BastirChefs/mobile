@@ -265,9 +265,7 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             List missingItems = checkMissingIngredients();
@@ -676,7 +674,6 @@ class _RecipeDisplayState extends State<RecipeDisplay> {
                   ],
                 ),
               ),
-      ),
-    );
+      );
   }
 }

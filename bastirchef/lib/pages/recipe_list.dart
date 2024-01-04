@@ -82,9 +82,7 @@ class _RecipeListState extends State<RecipeList> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
           backgroundColor: Color(0xFFE3E3E3),
           appBar: AppBar(
             backgroundColor: Color(0xFF282828),
@@ -142,7 +140,6 @@ class _RecipeListState extends State<RecipeList> {
                 ),
               )
 
-      ),
-    );
+      );
   }
 }

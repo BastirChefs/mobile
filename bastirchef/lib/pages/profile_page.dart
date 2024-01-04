@@ -258,9 +258,7 @@ class _ProfileState extends State<Profile> {
         } else {
           // Data has been successfully fetched
           var userData = snapshot.data!.data() as Map<String, dynamic>;
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: Scaffold(
+          return Scaffold(
               backgroundColor: Color(0xFFE3E3E3),
               appBar: AppBar(
                 backgroundColor: Color(0xFF282828),
@@ -652,8 +650,7 @@ class _ProfileState extends State<Profile> {
                   ],
                 ),
               ),
-            ),
-          );
+            );
         }
       },
     );

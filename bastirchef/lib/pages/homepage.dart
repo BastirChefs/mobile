@@ -83,9 +83,7 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         backgroundColor: Color(0xFFE3E3E3),
         body: isLoading
             ? Center(child: CircularProgressIndicator())
@@ -173,7 +171,6 @@ class _HomepageState extends State<Homepage> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
