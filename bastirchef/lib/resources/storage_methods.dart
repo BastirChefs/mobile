@@ -13,7 +13,8 @@ class StorageMethods {
   try {
     print('Uploading image...');
     // creating location to our firebase storage
-    Reference ref = _storage.ref().child(childName);//.child(_auth.currentUser!.uid);
+    String id = const Uuid().v1();
+    Reference ref = _storage.ref().child(childName).child(id);//.child(_auth.currentUser!.uid);
 
     // putting in uint8list format -> Upload task like a future but not future
     UploadTask uploadTask = ref.putData(file);
