@@ -28,7 +28,7 @@ class _ProfileState extends State<Profile> {
   //suggest
   String? selectedUnit;
   String ingredientName = '';
-  final List<String> units = ['gr', 'cl', 'kg', 'ml', 'pcs']; // Example units
+  final List<String> units = ['gr', 'kg', 'ml', 'liter', 'cl',  'pcs']; // Example units
   TextEditingController ingredientNameController = TextEditingController();
   List<Map<String, dynamic>> allIngredients = [];
   String errorMessage = '';

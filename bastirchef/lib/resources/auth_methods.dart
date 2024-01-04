@@ -64,26 +64,28 @@ class AuthMethods {
     return res;
   }
 
-  Future<String> logInUser(
-      {required String email, required String password}) async {
-    String res = "Some error occured";
+  Future<String> logInUser({required String email, required String password}) async {
+    String res = "Some error occurred";
 
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
+        await _auth.signInWithEmailAndPassword(email: email, password: password);
         _notificationService.initNotifications();
         res = "success";
+      } on FirebaseAuthException catch (e) {
+        print(e.message); // For debugging purposes
+        res = "Incorrect credentials. Please try again.";
       } catch (err) {
-        res = "fail";
-        print(res);
+        res = "An unexpected error occurred. Please try again later.";
       }
     } else {
-      res = "Please fill all fields";
+      res = "Please fill all the fields.";
     }
 
     return res;
   }
+
+
 
   Future<void> signOut() async {
     await _auth.signOut();

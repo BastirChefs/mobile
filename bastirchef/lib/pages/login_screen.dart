@@ -28,25 +28,30 @@ class _LogInScreenState extends State<LogInScreen> {
     setState(() {
       _isLoading = true;
     });
-    String res = await AuthMethods().logInUser(email: _emailTextController.text, password: _passwordTextController.text);
+
+    String res = await AuthMethods().logInUser(
+        email: _emailTextController.text, 
+        password: _passwordTextController.text
+    );
 
     if(res == "success"){
-      print("yey");
-      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const HomeScreen()));
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => Navigation()
-          ),
-        );
+          MaterialPageRoute(builder: (context) => Navigation()),
+      );
     } else {
+      // Display a SnackBar with the error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(res), // Display the error message
+          backgroundColor: Colors.red, // Red background color for error
+        ),
+      );
       setState(() {
         _isLoading = false;
       });
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
+
 
   void navigateToSignUp() {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SignUpScreen()));
